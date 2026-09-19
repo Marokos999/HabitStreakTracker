@@ -1,0 +1,220 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: HabitStreakTracker serverless application
+
+Globals:
+  Function:
+    Runtime: dotnet10
+    MemorySize: 512
+    Timeout: 30
+    Environment:
+      Variables:
+        TABLE_NAME: !Ref HabitTrackerTable
+        IS_LOCAL: "false"
+
+Resources:
+
+  # ── DynamoDB ──────────────────────────────────────────────────────────────
+  HabitTrackerTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: HabitTrackerTable
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: GSI1PK
+          AttributeType: S
+        - AttributeName: GSI1SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: GSI1
+          KeySchema:
+            - AttributeName: GSI1PK
+              KeyType: HASH
+            - AttributeName: GSI1SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+
+  # ── Cognito ───────────────────────────────────────────────────────────────
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: HabitTrackerUserPool
+      AutoVerifiedAttributes:
+        - email
+      UsernameAttributes:
+        - email
+
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref UserPool
+      ClientName: HabitTrackerClient
+      ExplicitAuthFlows:
+        - ALLOW_USER_PASSWORD_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+
+  # ── API Gateway ───────────────────────────────────────────────────────────
+  HabitTrackerApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      Auth:
+        Authorizers:
+          CognitoAuthorizer:
+            IdentitySource: $request.header.Authorization
+            JwtConfiguration:
+              issuer: !Sub https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPool}
+              audience:
+                - !Ref UserPoolClient
+        DefaultAuthorizer: CognitoAuthorizer
+
+  # ── Habits ────────────────────────────────────────────────────────────────
+  GetHabitsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: HabitTracker.Functions::HabitTracker.Functions.Functions.HabitsFunctionHandler::GetHabitsAsync
+      CodeUri: ./src/HabitTracker.Functions/
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref HabitTrackerTable
+      Events:
+        GetHabits:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HabitTrackerApi
+            Path: /habits
+            Method: GET
+
+  CreateHabitFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: HabitTracker.Functions::HabitTracker.Functions.Functions.HabitsFunctionHandler::CreateHabitAsync
+      CodeUri: ./src/HabitTracker.Functions/
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref HabitTrackerTable
+      Events:
+        CreateHabit:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HabitTrackerApi
+            Path: /habits
+            Method: POST
+
+  UpdateHabitFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: HabitTracker.Functions::HabitTracker.Functions.Functions.HabitsFunctionHandler::UpdateHabitAsync
+      CodeUri: ./src/HabitTracker.Functions/
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref HabitTrackerTable
+      Events:
+        UpdateHabit:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HabitTrackerApi
+            Path: /habits/{id}
+            Method: PUT
+
+  DeleteHabitFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: HabitTracker.Functions::HabitTracker.Functions.Functions.HabitsFunctionHandler::DeleteHabitAsync
+      CodeUri: ./src/HabitTracker.Functions/
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref HabitTrackerTable
+      Events:
+        DeleteHabit:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HabitTrackerApi
+            Path: /habits/{id}
+            Method: DELETE
+
+  # ── CheckIns ──────────────────────────────────────────────────────────────
+  CreateCheckInFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: HabitTracker.Functions::HabitTracker.Functions.Functions.CheckInsFunctionHandler::CreateCheckInAsync
+      CodeUri: ./src/HabitTracker.Functions/
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref HabitTrackerTable
+      Events:
+        CreateCheckIn:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HabitTrackerApi
+            Path: /checkins
+            Method: POST
+
+  DeleteCheckInFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: HabitTracker.Functions::HabitTracker.Functions.Functions.CheckInsFunctionHandler::DeleteCheckInAsync
+      CodeUri: ./src/HabitTracker.Functions/
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref HabitTrackerTable
+      Events:
+        DeleteCheckIn:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HabitTrackerApi
+            Path: /checkins/{habitId}/{date}
+            Method: DELETE
+
+  # ── Stats ─────────────────────────────────────────────────────────────────
+  GetHabitStatsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: HabitTracker.Functions::HabitTracker.Functions.Functions.StatsFunctionHandler::GetHabitStatsAsync
+      CodeUri: ./src/HabitTracker.Functions/
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref HabitTrackerTable
+      Events:
+        GetHabitStats:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HabitTrackerApi
+            Path: /habits/{id}/stats
+            Method: GET
+
+  GetStatsSummaryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: HabitTracker.Functions::HabitTracker.Functions.Functions.StatsFunctionHandler::GetSummaryAsync
+      CodeUri: ./src/HabitTracker.Functions/
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref HabitTrackerTable
+      Events:
+        GetStatsSummary:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HabitTrackerApi
+            Path: /stats/summary
+            Method: GET
+
+Outputs:
+  ApiUrl:
+    Description: API Gateway endpoint URL
+    Value: !Sub https://${HabitTrackerApi}.execute-api.${AWS::Region}.amazonaws.com/
+  UserPoolId:
+    Description: Cognito User Pool ID
+    Value: !Ref UserPool
+  UserPoolClientId:
+    Description: Cognito User Pool Client ID
+    Value: !Ref UserPoolClient

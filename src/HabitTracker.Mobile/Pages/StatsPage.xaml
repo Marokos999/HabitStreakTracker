@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HabitTracker.Mobile.Pages.StatsPage"
+             Shell.NavBarIsVisible="False">
+
+    <RefreshView Command="{Binding LoadCommand}"
+                 IsRefreshing="{Binding IsBusy}">
+        <ScrollView>
+            <VerticalStackLayout Spacing="0">
+
+                <!-- Header -->
+                <Grid Padding="24,52,24,28">
+                    <Grid.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="#512BD4" Offset="0" />
+                            <GradientStop Color="#2B0B98" Offset="1" />
+                        </LinearGradientBrush>
+                    </Grid.Background>
+                    <VerticalStackLayout>
+                        <Label Text="Overview" FontSize="13" FontAttributes="Bold"
+                               TextColor="#FFFFFFA0" />
+                        <Label Text="Your Stats" FontSize="28" FontAttributes="Bold"
+                               TextColor="White" Margin="0,4,0,0" />
+                    </VerticalStackLayout>
+                </Grid>
+
+                <!-- Error banner -->
+                <Border IsVisible="{Binding HasError}"
+                        Margin="16,12,16,0" Padding="14,12"
+                        StrokeShape="RoundRectangle 10"
+                        StrokeThickness="0"
+                        BackgroundColor="#FFF0F0">
+                    <Label Text="Could not connect to server. Pull to refresh when SAM is running."
+                           TextColor="#CC0000" FontSize="13" />
+                </Border>
+
+                <!-- Progress bar card -->
+                <Border Margin="16,16,16,0" Padding="20,18"
+                        StrokeShape="RoundRectangle 16"
+                        StrokeThickness="0"
+                        BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E2E}">
+                    <Border.Shadow>
+                        <Shadow Brush="#20000000" Offset="0,2" Radius="8" />
+                    </Border.Shadow>
+                    <VerticalStackLayout Spacing="12">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Grid.Column="0" Text="Today's Progress"
+                                   FontSize="14" FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light=#1C1C1E, Dark=White}" />
+                            <Label Grid.Column="1"
+                                   Text="{Binding CheckedInToday, StringFormat='{0}'}"
+                                   FontSize="14" FontAttributes="Bold"
+                                   TextColor="{StaticResource Primary}" />
+                        </Grid>
+                        <Label Text="{Binding TodayProgress}"
+                               FontSize="13"
+                               TextColor="{AppThemeBinding Light=#8E8E93, Dark=#8E8E93}" />
+                        <ProgressBar Progress="{Binding CompletionProgress}"
+                                     ProgressColor="{StaticResource Primary}"
+                                     HeightRequest="8" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Stat cards grid -->
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto"
+                      Margin="16,12,16,0" ColumnSpacing="12" RowSpacing="12">
+
+                    <!-- Total habits -->
+                    <Border Grid.Row="0" Grid.Column="0" Padding="16,18"
+                            StrokeShape="RoundRectangle 14" StrokeThickness="0"
+                            BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E2E}">
+                        <Border.Shadow>
+                            <Shadow Brush="#20000000" Offset="0,2" Radius="8" />
+                        </Border.Shadow>
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="{Binding TotalHabits}"
+                                   FontSize="34" FontAttributes="Bold"
+                                   TextColor="{StaticResource Primary}" />
+                            <Label Text="Total Habits" FontSize="12"
+                                   TextColor="{AppThemeBinding Light=#8E8E93, Dark=#8E8E93}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Checked in today -->
+                    <Border Grid.Row="0" Grid.Column="1" Padding="16,18"
+                            StrokeShape="RoundRectangle 14" StrokeThickness="0"
+                            BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E2E}">
+                        <Border.Shadow>
+                            <Shadow Brush="#20000000" Offset="0,2" Radius="8" />
+                        </Border.Shadow>
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="{Binding CheckedInToday}"
+                                   FontSize="34" FontAttributes="Bold"
+                                   TextColor="#10B981" />
+                            <Label Text="Done Today" FontSize="12"
+                                   TextColor="{AppThemeBinding Light=#8E8E93, Dark=#8E8E93}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Best streak -->
+                    <Border Grid.Row="1" Grid.Column="0" Padding="16,18"
+                            StrokeShape="RoundRectangle 14" StrokeThickness="0"
+                            BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E2E}">
+                        <Border.Shadow>
+                            <Shadow Brush="#20000000" Offset="0,2" Radius="8" />
+                        </Border.Shadow>
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="{Binding BestCurrentStreak}"
+                                   FontSize="34" FontAttributes="Bold"
+                                   TextColor="#F59E0B" />
+                            <Label Text="Best Streak" FontSize="12"
+                                   TextColor="{AppThemeBinding Light=#8E8E93, Dark=#8E8E93}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Avg completion -->
+                    <Border Grid.Row="1" Grid.Column="1" Padding="16,18"
+                            StrokeShape="RoundRectangle 14" StrokeThickness="0"
+                            BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E2E}">
+                        <Border.Shadow>
+                            <Shadow Brush="#20000000" Offset="0,2" Radius="8" />
+                        </Border.Shadow>
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="{Binding AverageCompletion}"
+                                   FontSize="34" FontAttributes="Bold"
+                                   TextColor="#EF4444" />
+                            <Label Text="Avg Completion" FontSize="12"
+                                   TextColor="{AppThemeBinding Light=#8E8E93, Dark=#8E8E93}" />
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+
+                <!-- Bottom padding -->
+                <BoxView HeightRequest="32" Color="Transparent" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+</ContentPage>

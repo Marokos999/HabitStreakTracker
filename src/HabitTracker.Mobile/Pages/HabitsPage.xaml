@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:HabitTracker.Mobile.Models"
+             x:Class="HabitTracker.Mobile.Pages.HabitsPage"
+             Shell.NavBarIsVisible="False">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Padding="20,52,20,24">
+            <Grid.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#512BD4" Offset="0.0" />
+                    <GradientStop Color="#2B0B98" Offset="1.0" />
+                </LinearGradientBrush>
+            </Grid.Background>
+            <Grid ColumnDefinitions="*,Auto">
+                <VerticalStackLayout Grid.Column="0" Spacing="4" VerticalOptions="Center">
+                    <Label Text="My Habits"
+                           FontSize="26" FontAttributes="Bold"
+                           TextColor="White" />
+                    <Label Text="{Binding TodayText}"
+                           FontSize="13" TextColor="#C4B5FD" />
+                </VerticalStackLayout>
+                <Button Grid.Column="1"
+                        Text="+" FontSize="24" FontAttributes="Bold"
+                        WidthRequest="52" HeightRequest="52"
+                        CornerRadius="26" Padding="0"
+                        BackgroundColor="White"
+                        TextColor="#512BD4"
+                        VerticalOptions="Center"
+                        Command="{Binding NavigateToAddCommand}" />
+            </Grid>
+        </Grid>
+
+        <!-- Scrollable body -->
+        <RefreshView Grid.Row="1"
+                     Command="{Binding LoadCommand}"
+                     IsRefreshing="{Binding IsBusy}">
+            <ScrollView>
+                <VerticalStackLayout Spacing="0" Padding="0,8,0,24">
+
+                    <!-- Empty state (no active AND no completed) -->
+                    <VerticalStackLayout IsVisible="{Binding IsEmpty}"
+                                         HorizontalOptions="Center"
+                                         Spacing="12" Margin="0,60,0,0">
+                        <Label Text="🎯" FontSize="56" HorizontalOptions="Center" />
+                        <Label Text="No habits yet"
+                               FontSize="18" FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               TextColor="{StaticResource Gray400}" />
+                        <Label Text="Tap + to add your first habit"
+                               FontSize="13" HorizontalOptions="Center"
+                               TextColor="{StaticResource Gray300}" />
+                    </VerticalStackLayout>
+
+                    <!-- Active habits -->
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding ActiveHabits}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:Habit">
+                                <Border StrokeShape="RoundRectangle 14"
+                                        StrokeThickness="1"
+                                        Stroke="{StaticResource Gray100}"
+                                        Padding="0"
+                                        Margin="16,5">
+                                    <Grid ColumnDefinitions="8,*,54,54" MinimumHeightRequest="72">
+                                        <BoxView Grid.Column="0" Color="{Binding Color}" CornerRadius="14,0,14,0" />
+                                        <VerticalStackLayout Grid.Column="1" Padding="14,12" Spacing="3" VerticalOptions="Center">
+                                            <VerticalStackLayout.GestureRecognizers>
+                                                <TapGestureRecognizer Tapped="OnHabitTapped" />
+                                            </VerticalStackLayout.GestureRecognizers>
+                                            <Label Text="{Binding Name}" FontSize="16" FontAttributes="Bold" />
+                                            <Label Text="{Binding Description}" FontSize="12" TextColor="{StaticResource Gray400}" />
+                                        </VerticalStackLayout>
+                                        <Button Grid.Column="2"
+                                                Text="✓" FontSize="18"
+                                                WidthRequest="44" HeightRequest="44"
+                                                CornerRadius="22" Padding="0"
+                                                Margin="0,0,6,0"
+                                                VerticalOptions="Center"
+                                                BackgroundColor="{StaticResource Primary}"
+                                                TextColor="White"
+                                                CommandParameter="{Binding .}"
+                                                Clicked="OnCheckInClicked" />
+                                        <Button Grid.Column="3"
+                                                Text="🗑" FontSize="16"
+                                                WidthRequest="44" HeightRequest="44"
+                                                CornerRadius="22" Padding="0"
+                                                Margin="0,0,10,0"
+                                                VerticalOptions="Center"
+                                                BackgroundColor="#FFF0F0"
+                                                TextColor="#FF3B30"
+                                                CommandParameter="{Binding .}"
+                                                Clicked="OnDeleteClicked" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+
+                    <!-- Done Today section -->
+                    <VerticalStackLayout IsVisible="{Binding HasDoneSection}" Margin="0,16,0,0">
+                        <Label Text="✅  Done Today"
+                               FontSize="13" FontAttributes="Bold"
+                               TextColor="{StaticResource Gray400}"
+                               Margin="20,0,0,6" />
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding CompletedHabits}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="models:Habit">
+                                    <Border StrokeShape="RoundRectangle 14"
+                                            StrokeThickness="1"
+                                            Stroke="{StaticResource Gray100}"
+                                            Padding="0"
+                                            Margin="16,5"
+                                            Opacity="0.55">
+                                        <Grid ColumnDefinitions="8,*,54" MinimumHeightRequest="64">
+                                            <BoxView Grid.Column="0" Color="#22C55E" CornerRadius="14,0,14,0" />
+                                            <VerticalStackLayout Grid.Column="1" Padding="14,12" Spacing="3" VerticalOptions="Center">
+                                                <Label Text="{Binding Name}" FontSize="15" FontAttributes="Bold" />
+                                                <Label Text="{Binding Description}" FontSize="12" TextColor="{StaticResource Gray400}" />
+                                            </VerticalStackLayout>
+                                            <Button Grid.Column="2"
+                                                    Text="🗑" FontSize="16"
+                                                    WidthRequest="44" HeightRequest="44"
+                                                    CornerRadius="22" Padding="0"
+                                                    Margin="0,0,10,0"
+                                                    VerticalOptions="Center"
+                                                    BackgroundColor="#FFF0F0"
+                                                    TextColor="#FF3B30"
+                                                    CommandParameter="{Binding .}"
+                                                    Clicked="OnDeleteClicked" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+
+                </VerticalStackLayout>
+            </ScrollView>
+        </RefreshView>
+
+    </Grid>
+</ContentPage>

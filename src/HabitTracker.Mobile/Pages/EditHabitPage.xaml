@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:HabitTracker.Mobile.ViewModels"
+             x:Class="HabitTracker.Mobile.Pages.EditHabitPage"
+             x:Name="ThisPage"
+             Title="Edit Habit">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="0">
+
+            <Label Text="NAME" FontSize="11" FontAttributes="Bold"
+                   TextColor="{StaticResource Gray400}" Margin="0,0,0,6" />
+            <Border Padding="4,0" StrokeShape="RoundRectangle 10"
+                    StrokeThickness="1.5" Stroke="{StaticResource Gray200}"
+                    Margin="0,0,0,20">
+                <Entry Text="{Binding Name}" BackgroundColor="Transparent" />
+            </Border>
+
+            <Label Text="DESCRIPTION" FontSize="11" FontAttributes="Bold"
+                   TextColor="{StaticResource Gray400}" Margin="0,0,0,6" />
+            <Border Padding="4,4" StrokeShape="RoundRectangle 10"
+                    StrokeThickness="1.5" Stroke="{StaticResource Gray200}"
+                    Margin="0,0,0,24">
+                <Editor Text="{Binding Description}" Placeholder="Optional"
+                        BackgroundColor="Transparent"
+                        MinimumHeightRequest="80" AutoSize="TextChanges" />
+            </Border>
+
+            <Grid ColumnDefinitions="Auto,*" Margin="0,0,0,10">
+                <BoxView Grid.Column="0"
+                         Color="{Binding Color}"
+                         WidthRequest="18" HeightRequest="18"
+                         CornerRadius="9"
+                         VerticalOptions="Center"
+                         Margin="0,0,8,0" />
+                <Label Grid.Column="1" Text="COLOR" FontSize="11" FontAttributes="Bold"
+                       TextColor="{StaticResource Gray400}" VerticalOptions="Center" />
+            </Grid>
+            <FlexLayout BindableLayout.ItemsSource="{Binding PresetColors}"
+                        Wrap="Wrap" JustifyContent="Start"
+                        Margin="0,0,0,28">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <Border WidthRequest="48" HeightRequest="48"
+                                StrokeShape="RoundRectangle 24"
+                                StrokeThickness="0"
+                                BackgroundColor="{Binding .}"
+                                Margin="0,0,10,10">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={x:Reference ThisPage}, Path=BindingContext.SelectColorCommand}"
+                                    CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </FlexLayout>
+
+            <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+                <Label Grid.Column="0" Text="DAYS PER WEEK"
+                       FontSize="11" FontAttributes="Bold"
+                       TextColor="{StaticResource Gray400}"
+                       VerticalOptions="Center" />
+                <Border Grid.Column="1" Padding="14,7"
+                        StrokeShape="RoundRectangle 16"
+                        StrokeThickness="0"
+                        BackgroundColor="{StaticResource Secondary}">
+                    <Label Text="{Binding TargetDaysPerWeek, StringFormat='{0} days'}"
+                           FontSize="13" FontAttributes="Bold"
+                           TextColor="{StaticResource Primary}" />
+                </Border>
+            </Grid>
+            <Slider Value="{Binding TargetDaysPerWeek}"
+                    Minimum="1" Maximum="7"
+                    Margin="0,0,0,36" />
+
+            <Button Text="Save Changes"
+                    HeightRequest="54" CornerRadius="14"
+                    FontSize="16" FontAttributes="Bold"
+                    Command="{Binding SaveCommand}" />
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}"
+                               Margin="0,16,0,0" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

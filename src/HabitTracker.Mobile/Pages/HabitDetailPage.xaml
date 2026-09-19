@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HabitTracker.Mobile.Pages.HabitDetailPage"
+             Title="{Binding HabitName}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Edit" Command="{Binding NavigateToEditCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="0">
+
+            <!-- Habit header -->
+            <Grid Padding="20,20,20,24">
+                <Grid.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#512BD4" Offset="0.0" />
+                        <GradientStop Color="#2B0B98" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Grid.Background>
+                <Grid ColumnDefinitions="Auto,*">
+                    <BoxView Grid.Column="0"
+                             Color="{Binding HabitColor}"
+                             WidthRequest="14" HeightRequest="14"
+                             CornerRadius="7"
+                             VerticalOptions="Center"
+                             Margin="0,0,12,0" />
+                    <Label Grid.Column="1"
+                           Text="{Binding HabitName}"
+                           FontSize="22" FontAttributes="Bold"
+                           TextColor="White"
+                           VerticalOptions="Center" />
+                </Grid>
+            </Grid>
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}"
+                               Margin="0,24,0,0" />
+
+            <!-- Stats grid -->
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto"
+                  ColumnSpacing="12" RowSpacing="12"
+                  Padding="16,20">
+
+                <Border Grid.Row="0" Grid.Column="0" Padding="16"
+                        StrokeShape="RoundRectangle 14"
+                        StrokeThickness="1" Stroke="{StaticResource Gray100}">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="🔥 Current Streak" FontSize="12" TextColor="{StaticResource Gray400}" />
+                        <Label Text="{Binding Streak.CurrentStreak, StringFormat='{0} days'}"
+                               FontSize="28" FontAttributes="Bold" TextColor="{StaticResource Primary}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Grid.Row="0" Grid.Column="1" Padding="16"
+                        StrokeShape="RoundRectangle 14"
+                        StrokeThickness="1" Stroke="{StaticResource Gray100}">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="🏆 Longest Streak" FontSize="12" TextColor="{StaticResource Gray400}" />
+                        <Label Text="{Binding Streak.LongestStreak, StringFormat='{0} days'}"
+                               FontSize="28" FontAttributes="Bold" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Grid.Row="1" Grid.Column="0" Padding="16"
+                        StrokeShape="RoundRectangle 14"
+                        StrokeThickness="1" Stroke="{StaticResource Gray100}">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="✅ Total Check-ins" FontSize="12" TextColor="{StaticResource Gray400}" />
+                        <Label Text="{Binding Streak.TotalCheckIns}"
+                               FontSize="28" FontAttributes="Bold" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Grid.Row="1" Grid.Column="1" Padding="16"
+                        StrokeShape="RoundRectangle 14"
+                        StrokeThickness="1" Stroke="{StaticResource Gray100}">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="📊 Completion" FontSize="12" TextColor="{StaticResource Gray400}" />
+                        <Label Text="{Binding Streak.CompletionRate, StringFormat='{0:F0}%'}"
+                               FontSize="28" FontAttributes="Bold" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <!-- Check In button -->
+            <Button Text="✓  Check In Today"
+                    Margin="16,4,16,24"
+                    HeightRequest="54"
+                    CornerRadius="14"
+                    FontSize="16" FontAttributes="Bold"
+                    Command="{Binding CheckInCommand}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

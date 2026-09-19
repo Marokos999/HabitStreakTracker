@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HabitTracker.Mobile.Pages.LoginPage"
+             Shell.NavBarIsVisible="False">
+
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="#512BD4" Offset="0" />
+                <GradientStop Color="#2B0B98" Offset="1" />
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <VerticalStackLayout VerticalOptions="Center"
+                             HorizontalOptions="Center"
+                             Padding="40,0"
+                             Spacing="0">
+
+            <!-- Icon placeholder -->
+            <Border WidthRequest="88" HeightRequest="88"
+                    StrokeShape="RoundRectangle 24"
+                    StrokeThickness="0"
+                    BackgroundColor="#FFFFFF20"
+                    HorizontalOptions="Center"
+                    Margin="0,0,0,28">
+                <Label Text="🔥" FontSize="44"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center" />
+            </Border>
+
+            <Label Text="Habit Tracker"
+                   FontSize="32" FontAttributes="Bold"
+                   TextColor="White"
+                   HorizontalOptions="Center"
+                   Margin="0,0,0,8" />
+
+            <Label Text="Build streaks, track progress"
+                   FontSize="15"
+                   TextColor="#FFFFFFB0"
+                   HorizontalOptions="Center"
+                   Margin="0,0,0,52" />
+
+            <Button Text="Sign In"
+                    HeightRequest="54"
+                    CornerRadius="14"
+                    FontSize="16" FontAttributes="Bold"
+                    BackgroundColor="White"
+                    TextColor="{StaticResource Primary}"
+                    Command="{Binding SignInCommand}"
+                    Margin="0,0,0,12" />
+
+            <Button Text="Create Account"
+                    HeightRequest="54"
+                    CornerRadius="14"
+                    FontSize="16" FontAttributes="Bold"
+                    BackgroundColor="Transparent"
+                    BorderColor="#FFFFFF50"
+                    BorderWidth="1.5"
+                    TextColor="White"
+                    Command="{Binding SignUpCommand}"
+                    Margin="0,0,0,16" />
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}"
+                               Color="White"
+                               Margin="0,0,0,16" />
+
+            <Label Text="{Binding ErrorMessage}"
+                   IsVisible="{Binding HasError}"
+                   TextColor="#FFB4AB"
+                   HorizontalOptions="Center"
+                   FontSize="13" />
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,21 @@
+using HabitTracker.Application.Repositories;
+
+namespace HabitTracker.Application.Habits.UpdateHabit;
+
+public class UpdateHabitHandler(IHabitRepository repo)
+{
+    public async Task Handle(UpdateHabitCommand command)
+  {
+    var habit = await repo.GetByIdAsync(command.UserId, command.HabitId)
+    ?? throw new KeyNotFoundException($"Habit {command.HabitId} not found.");
+
+    habit.Name = command.Name;
+    habit.Description = command.Description;
+    habit.Color = command.Color;
+    habit.Frequency = command.Frequency;
+    habit.TargetDaysPerWeek = command.TargetDaysPerWeek;
+
+
+    await repo.UpdateAsync(habit);
+  }
+}
