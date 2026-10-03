@@ -11,8 +11,8 @@
         <Grid Grid.Row="0" Padding="20,52,20,24">
             <Grid.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                    <GradientStop Color="#512BD4" Offset="0.0" />
-                    <GradientStop Color="#2B0B98" Offset="1.0" />
+                    <GradientStop Color="#4F46E5" Offset="0.0" />
+                    <GradientStop Color="#3730A3" Offset="1.0" />
                 </LinearGradientBrush>
             </Grid.Background>
             <Grid ColumnDefinitions="*,Auto">
@@ -28,7 +28,7 @@
                         WidthRequest="52" HeightRequest="52"
                         CornerRadius="26" Padding="0"
                         BackgroundColor="White"
-                        TextColor="#512BD4"
+                        TextColor="{StaticResource Primary}"
                         VerticalOptions="Center"
                         Command="{Binding NavigateToAddCommand}" />
             </Grid>
@@ -61,7 +61,7 @@
                             <DataTemplate x:DataType="models:Habit">
                                 <Border StrokeShape="RoundRectangle 14"
                                         StrokeThickness="1"
-                                        Stroke="{StaticResource Gray100}"
+                                       
                                         Padding="0"
                                         Margin="16,5">
                                     <Grid ColumnDefinitions="8,*,54,54" MinimumHeightRequest="72">
@@ -89,8 +89,8 @@
                                                 CornerRadius="22" Padding="0"
                                                 Margin="0,0,10,0"
                                                 VerticalOptions="Center"
-                                                BackgroundColor="#FFF0F0"
-                                                TextColor="#FF3B30"
+                                                BackgroundColor="{AppThemeBinding Light={StaticResource DangerSurfaceLight}, Dark={StaticResource DangerSurfaceDark}}"
+                                                TextColor="{AppThemeBinding Light={StaticResource DangerLight}, Dark={StaticResource DangerDark}}"
                                                 CommandParameter="{Binding .}"
                                                 Clicked="OnDeleteClicked" />
                                     </Grid>
@@ -110,12 +110,12 @@
                                 <DataTemplate x:DataType="models:Habit">
                                     <Border StrokeShape="RoundRectangle 14"
                                             StrokeThickness="1"
-                                            Stroke="{StaticResource Gray100}"
+                                           
                                             Padding="0"
                                             Margin="16,5"
                                             Opacity="0.55">
                                         <Grid ColumnDefinitions="8,*,54" MinimumHeightRequest="64">
-                                            <BoxView Grid.Column="0" Color="#22C55E" CornerRadius="14,0,14,0" />
+                                            <BoxView Grid.Column="0" Color="{StaticResource Success}" CornerRadius="14,0,14,0" />
                                             <VerticalStackLayout Grid.Column="1" Padding="14,12" Spacing="3" VerticalOptions="Center">
                                                 <Label Text="{Binding Name}" FontSize="15" FontAttributes="Bold" />
                                                 <Label Text="{Binding Description}" FontSize="12" TextColor="{StaticResource Gray400}" />
@@ -126,8 +126,8 @@
                                                     CornerRadius="22" Padding="0"
                                                     Margin="0,0,10,0"
                                                     VerticalOptions="Center"
-                                                    BackgroundColor="#FFF0F0"
-                                                    TextColor="#FF3B30"
+                                                    BackgroundColor="{AppThemeBinding Light={StaticResource DangerSurfaceLight}, Dark={StaticResource DangerSurfaceDark}}"
+                                                    TextColor="{AppThemeBinding Light={StaticResource DangerLight}, Dark={StaticResource DangerDark}}"
                                                     CommandParameter="{Binding .}"
                                                     Clicked="OnDeleteClicked" />
                                         </Grid>

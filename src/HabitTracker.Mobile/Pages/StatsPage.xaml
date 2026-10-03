@@ -13,8 +13,8 @@
                 <Grid Padding="24,52,24,28">
                     <Grid.Background>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                            <GradientStop Color="#512BD4" Offset="0" />
-                            <GradientStop Color="#2B0B98" Offset="1" />
+                            <GradientStop Color="#4F46E5" Offset="0" />
+                            <GradientStop Color="#3730A3" Offset="1" />
                         </LinearGradientBrush>
                     </Grid.Background>
                     <VerticalStackLayout>
@@ -30,16 +30,16 @@
                         Margin="16,12,16,0" Padding="14,12"
                         StrokeShape="RoundRectangle 10"
                         StrokeThickness="0"
-                        BackgroundColor="#FFF0F0">
+                        BackgroundColor="{AppThemeBinding Light={StaticResource DangerSurfaceLight}, Dark={StaticResource DangerSurfaceDark}}">
                     <Label Text="Could not connect to server. Pull to refresh when SAM is running."
-                           TextColor="#CC0000" FontSize="13" />
+                           TextColor="{AppThemeBinding Light={StaticResource DangerLight}, Dark={StaticResource DangerDark}}" FontSize="13" />
                 </Border>
 
                 <!-- Progress bar card -->
                 <Border Margin="16,16,16,0" Padding="20,18"
                         StrokeShape="RoundRectangle 16"
                         StrokeThickness="0"
-                        BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E2E}">
+                        BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}">
                     <Border.Shadow>
                         <Shadow Brush="#20000000" Offset="0,2" Radius="8" />
                     </Border.Shadow>
@@ -47,7 +47,7 @@
                         <Grid ColumnDefinitions="*,Auto">
                             <Label Grid.Column="0" Text="Today's Progress"
                                    FontSize="14" FontAttributes="Bold"
-                                   TextColor="{AppThemeBinding Light=#1C1C1E, Dark=White}" />
+                                   TextColor="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" />
                             <Label Grid.Column="1"
                                    Text="{Binding CheckedInToday, StringFormat='{0}'}"
                                    FontSize="14" FontAttributes="Bold"
@@ -55,7 +55,7 @@
                         </Grid>
                         <Label Text="{Binding TodayProgress}"
                                FontSize="13"
-                               TextColor="{AppThemeBinding Light=#8E8E93, Dark=#8E8E93}" />
+                               TextColor="{AppThemeBinding Light={StaticResource MutedLight}, Dark={StaticResource MutedDark}}" />
                         <ProgressBar Progress="{Binding CompletionProgress}"
                                      ProgressColor="{StaticResource Primary}"
                                      HeightRequest="8" />
@@ -69,7 +69,7 @@
                     <!-- Total habits -->
                     <Border Grid.Row="0" Grid.Column="0" Padding="16,18"
                             StrokeShape="RoundRectangle 14" StrokeThickness="0"
-                            BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E2E}">
+                            BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}">
                         <Border.Shadow>
                             <Shadow Brush="#20000000" Offset="0,2" Radius="8" />
                         </Border.Shadow>
@@ -78,14 +78,14 @@
                                    FontSize="34" FontAttributes="Bold"
                                    TextColor="{StaticResource Primary}" />
                             <Label Text="Total Habits" FontSize="12"
-                                   TextColor="{AppThemeBinding Light=#8E8E93, Dark=#8E8E93}" />
+                                   TextColor="{AppThemeBinding Light={StaticResource MutedLight}, Dark={StaticResource MutedDark}}" />
                         </VerticalStackLayout>
                     </Border>
 
                     <!-- Checked in today -->
                     <Border Grid.Row="0" Grid.Column="1" Padding="16,18"
                             StrokeShape="RoundRectangle 14" StrokeThickness="0"
-                            BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E2E}">
+                            BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}">
                         <Border.Shadow>
                             <Shadow Brush="#20000000" Offset="0,2" Radius="8" />
                         </Border.Shadow>
@@ -94,14 +94,14 @@
                                    FontSize="34" FontAttributes="Bold"
                                    TextColor="#10B981" />
                             <Label Text="Done Today" FontSize="12"
-                                   TextColor="{AppThemeBinding Light=#8E8E93, Dark=#8E8E93}" />
+                                   TextColor="{AppThemeBinding Light={StaticResource MutedLight}, Dark={StaticResource MutedDark}}" />
                         </VerticalStackLayout>
                     </Border>
 
                     <!-- Best streak -->
                     <Border Grid.Row="1" Grid.Column="0" Padding="16,18"
                             StrokeShape="RoundRectangle 14" StrokeThickness="0"
-                            BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E2E}">
+                            BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}">
                         <Border.Shadow>
                             <Shadow Brush="#20000000" Offset="0,2" Radius="8" />
                         </Border.Shadow>
@@ -110,14 +110,14 @@
                                    FontSize="34" FontAttributes="Bold"
                                    TextColor="#F59E0B" />
                             <Label Text="Best Streak" FontSize="12"
-                                   TextColor="{AppThemeBinding Light=#8E8E93, Dark=#8E8E93}" />
+                                   TextColor="{AppThemeBinding Light={StaticResource MutedLight}, Dark={StaticResource MutedDark}}" />
                         </VerticalStackLayout>
                     </Border>
 
                     <!-- Avg completion -->
                     <Border Grid.Row="1" Grid.Column="1" Padding="16,18"
                             StrokeShape="RoundRectangle 14" StrokeThickness="0"
-                            BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E2E}">
+                            BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}">
                         <Border.Shadow>
                             <Shadow Brush="#20000000" Offset="0,2" Radius="8" />
                         </Border.Shadow>
@@ -126,7 +126,7 @@
                                    FontSize="34" FontAttributes="Bold"
                                    TextColor="#EF4444" />
                             <Label Text="Avg Completion" FontSize="12"
-                                   TextColor="{AppThemeBinding Light=#8E8E93, Dark=#8E8E93}" />
+                                   TextColor="{AppThemeBinding Light={StaticResource MutedLight}, Dark={StaticResource MutedDark}}" />
                         </VerticalStackLayout>
                     </Border>
                 </Grid>

@@ -15,8 +15,8 @@
             <Grid Padding="20,20,20,24">
                 <Grid.Background>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                        <GradientStop Color="#512BD4" Offset="0.0" />
-                        <GradientStop Color="#2B0B98" Offset="1.0" />
+                        <GradientStop Color="#4F46E5" Offset="0.0" />
+                        <GradientStop Color="#3730A3" Offset="1.0" />
                     </LinearGradientBrush>
                 </Grid.Background>
                 <Grid ColumnDefinitions="Auto,*">
@@ -45,7 +45,7 @@
 
                 <Border Grid.Row="0" Grid.Column="0" Padding="16"
                         StrokeShape="RoundRectangle 14"
-                        StrokeThickness="1" Stroke="{StaticResource Gray100}">
+                        StrokeThickness="1">
                     <VerticalStackLayout Spacing="4">
                         <Label Text="🔥 Current Streak" FontSize="12" TextColor="{StaticResource Gray400}" />
                         <Label Text="{Binding Streak.CurrentStreak, StringFormat='{0} days'}"
@@ -55,7 +55,7 @@
 
                 <Border Grid.Row="0" Grid.Column="1" Padding="16"
                         StrokeShape="RoundRectangle 14"
-                        StrokeThickness="1" Stroke="{StaticResource Gray100}">
+                        StrokeThickness="1">
                     <VerticalStackLayout Spacing="4">
                         <Label Text="🏆 Longest Streak" FontSize="12" TextColor="{StaticResource Gray400}" />
                         <Label Text="{Binding Streak.LongestStreak, StringFormat='{0} days'}"
@@ -65,7 +65,7 @@
 
                 <Border Grid.Row="1" Grid.Column="0" Padding="16"
                         StrokeShape="RoundRectangle 14"
-                        StrokeThickness="1" Stroke="{StaticResource Gray100}">
+                        StrokeThickness="1">
                     <VerticalStackLayout Spacing="4">
                         <Label Text="✅ Total Check-ins" FontSize="12" TextColor="{StaticResource Gray400}" />
                         <Label Text="{Binding Streak.TotalCheckIns}"
@@ -75,7 +75,7 @@
 
                 <Border Grid.Row="1" Grid.Column="1" Padding="16"
                         StrokeShape="RoundRectangle 14"
-                        StrokeThickness="1" Stroke="{StaticResource Gray100}">
+                        StrokeThickness="1">
                     <VerticalStackLayout Spacing="4">
                         <Label Text="📊 Completion" FontSize="12" TextColor="{StaticResource Gray400}" />
                         <Label Text="{Binding Streak.CompletionRate, StringFormat='{0:F0}%'}"
