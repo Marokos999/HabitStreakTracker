@@ -1,5 +1,3 @@
-using System.Net;
-using System.Text.Json;
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
 using HabitTracker.Application.Habits.CreateHabit;
@@ -8,6 +6,7 @@ using HabitTracker.Application.Habits.GetHabits;
 using HabitTracker.Application.Habits.UpdateHabit;
 using HabitTracker.Application.Repositories;
 using HabitTracker.Domain.Enums;
+using HabitTracker.Functions.Http;
 using Microsoft.Extensions.DependencyInjection;
 
 [assembly:
@@ -18,10 +17,6 @@ namespace HabitTracker.Functions.Functions;
 public class HabitsFunctionHandler
 {
   private readonly IHabitRepository repo;
-  private static readonly JsonSerializerOptions JsonOptions = new ()
-  {
-    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-  };
 
   public HabitsFunctionHandler()
   {
@@ -29,63 +24,41 @@ public class HabitsFunctionHandler
     repo = scope.ServiceProvider.GetRequiredService<IHabitRepository>();
   }
 
-  public async Task<APIGatewayProxyResponse> GetHabitsAsync(APIGatewayProxyRequest request, ILambdaContext context)
-  {
-    var result = await new GetHabitsHandler(repo).Handle(new GetHabitsQuery(GetUserId(request)));
-        return Ok(result.Habits);
-  }
+  public Task<APIGatewayProxyResponse> GetHabitsAsync(APIGatewayProxyRequest request, ILambdaContext context) =>
+    ApiResponse.ExecuteAsync(request, context, async userId =>
+    {
+      var result = await new GetHabitsHandler(repo).Handle(new GetHabitsQuery(userId));
+      return ApiResponse.Ok(result.Habits);
+    });
 
-  public async Task<APIGatewayProxyResponse> CreateHabitAsync(APIGatewayProxyRequest request, ILambdaContext context)
-  {
-    var body = JsonSerializer.Deserialize<HabitRequest>(request.Body, JsonOptions)!;
-    var command = new CreateHabitCommand(GetUserId(request), body.Name, body.Description, body.Frequency,
-                                                              body.Color, body.TargetDaysPerWeek);
-    var result = await new CreateHabitHandler(repo).Handle(command);
-    return Created(result.Habit);
-  }
+  public Task<APIGatewayProxyResponse> CreateHabitAsync(APIGatewayProxyRequest request, ILambdaContext context) =>
+    ApiResponse.ExecuteAsync(request, context, async userId =>
+    {
+      var body = ApiResponse.ParseBody<HabitRequest>(request);
+      var command = new CreateHabitCommand(userId, body.Name, body.Description, body.Frequency,
+                                           body.Color, body.TargetDaysPerWeek);
+      var result = await new CreateHabitHandler(repo).Handle(command);
+      return ApiResponse.Created(result.Habit);
+    });
 
+  public Task<APIGatewayProxyResponse> UpdateHabitAsync(APIGatewayProxyRequest request, ILambdaContext context) =>
+    ApiResponse.ExecuteAsync(request, context, async userId =>
+    {
+      var habitId = ApiResponse.GetGuid(request, "id");
+      var body = ApiResponse.ParseBody<HabitRequest>(request);
+      var command = new UpdateHabitCommand(userId, habitId, body.Name, body.Description, body.Frequency,
+                                           body.Color, body.TargetDaysPerWeek);
+      await new UpdateHabitHandler(repo).Handle(command);
+      return ApiResponse.NoContent();
+    });
 
-  public async Task<APIGatewayProxyResponse> UpdateHabitAsync(APIGatewayProxyRequest request, ILambdaContext context)
-  {
-    var habitId = Guid.Parse(request.PathParameters["id"]);
-    var body = JsonSerializer.Deserialize<HabitRequest>(request.Body, JsonOptions)!;
-    var command = new UpdateHabitCommand(GetUserId(request), habitId,body.Name, body.Description, body.Frequency,
-                                                              body.Color, body.TargetDaysPerWeek);
-     await new UpdateHabitHandler(repo).Handle(command);
-    return NoContent();
-  }
-
-  public async Task<APIGatewayProxyResponse> DeleteHabitAsync(APIGatewayProxyRequest request, ILambdaContext context)
-  {
-    var habitId = Guid.Parse(request.PathParameters["id"]);
-    await new DeleteHabitHandler(repo).Handle(new DeleteHabitCommand(GetUserId(request), habitId));
-    return NoContent();
-  }
-
-
-  private static string GetUserId(APIGatewayProxyRequest request)
-  {
-    if (request.RequestContext?.Authorizer?.Claims == null)
-      return "local-test-user";
-    return request.RequestContext.Authorizer.Claims["sub"];
-  }
-
-  private static APIGatewayProxyResponse Ok(object body) => new ()
-  {
-    StatusCode = (int)HttpStatusCode.OK,
-    Body = JsonSerializer.Serialize(body, JsonOptions),
-    Headers = new Dictionary<string, string> { ["Content-Type"] = "application/json" }
-  };
-
-  private static APIGatewayProxyResponse Created(object body) => new()
-  {
-    StatusCode = (int)HttpStatusCode.Created,
-    Body = JsonSerializer.Serialize(body, JsonOptions),
-    Headers = new Dictionary<string, string>{["Content-Type"] = "application/json"}
-  };private static APIGatewayProxyResponse NoContent() => new()
-  {
-    StatusCode = (int)HttpStatusCode.NoContent
-  };
+  public Task<APIGatewayProxyResponse> DeleteHabitAsync(APIGatewayProxyRequest request, ILambdaContext context) =>
+    ApiResponse.ExecuteAsync(request, context, async userId =>
+    {
+      var habitId = ApiResponse.GetGuid(request, "id");
+      await new DeleteHabitHandler(repo).Handle(new DeleteHabitCommand(userId, habitId));
+      return ApiResponse.NoContent();
+    });
 
   public record HabitRequest
   (

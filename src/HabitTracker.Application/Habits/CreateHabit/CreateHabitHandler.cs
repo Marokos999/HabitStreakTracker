@@ -7,17 +7,20 @@ public class CreateHabitHandler(IHabitRepository repo)
 {
   public async Task<CreateHabitResult> Handle(CreateHabitCommand command)
   {
-     var habit = new Habit
-     {
-       UserId = command.UserId,
-       Name = command.Name,
-       Description = command.Description,
-       Frequency = command.Frequency,
-       Color = command.Color,
-       TargetDaysPerWeek = command.TargetDaysPerWeek
-     };
+    HabitValidator.Validate(command.Name, command.Description, command.Frequency, command.Color,
+                            command.TargetDaysPerWeek);
 
-     await repo.CreateAsync(habit);
-     return new CreateHabitResult(habit);
+    var habit = new Habit
+    {
+      UserId = command.UserId,
+      Name = command.Name.Trim(),
+      Description = command.Description,
+      Frequency = command.Frequency,
+      Color = command.Color,
+      TargetDaysPerWeek = command.TargetDaysPerWeek
+    };
+
+    await repo.CreateAsync(habit);
+    return new CreateHabitResult(habit);
   }
 }
