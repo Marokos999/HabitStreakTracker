@@ -12,11 +12,13 @@ namespace HabitTracker.Functions.Functions;
 public class CheckInsFunctionHandler
 {
   private readonly ICheckInRepository repo;
+  private readonly IHabitRepository habitRepo;
 
   public CheckInsFunctionHandler()
   {
     var scope = Startup.ServiceProvider.CreateScope();
     repo = scope.ServiceProvider.GetRequiredService<ICheckInRepository>();
+    habitRepo = scope.ServiceProvider.GetRequiredService<IHabitRepository>();
   }
 
   public Task<APIGatewayProxyResponse> CreateCheckInAsync(APIGatewayProxyRequest request, ILambdaContext context) =>
@@ -28,7 +30,7 @@ public class CheckInsFunctionHandler
 
       var date = ApiResponse.ParseDate(body.Date, "date");
       var command = new CreateCheckInCommand(userId, body.HabitId, date, body.Note);
-      var result = await new CreateCheckInHandler(repo).Handle(command);
+      var result = await new CreateCheckInHandler(repo, habitRepo).Handle(command);
       return ApiResponse.Created(result.CheckIn);
     });
 
