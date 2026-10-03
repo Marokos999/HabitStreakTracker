@@ -1,5 +1,7 @@
 # HabitStreakTracker
 
+[![CI](https://github.com/Marokos999/HabitStreakTracker/actions/workflows/ci.yml/badge.svg)](https://github.com/Marokos999/HabitStreakTracker/actions/workflows/ci.yml)
+
 A habit tracking app with streak statistics: a **.NET MAUI** mobile client talking to a **serverless .NET 10 API** on AWS (Lambda, API Gateway, DynamoDB, Cognito).
 
 <!-- TODO: add screenshots / GIF of the mobile app here -->
@@ -127,7 +129,6 @@ The stack creates the DynamoDB table, Cognito user pool and client, the HTTP API
 ## Roadmap
 
 - Cognito PKCE flow and token refresh in the mobile app
-- CI pipeline (build, test, `sam validate`)
 - Dark mode and streak heatmap in the UI
 
 ## License

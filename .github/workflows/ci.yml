@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Build and test backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: |
+          dotnet restore src/HabitTracker.Functions
+          dotnet restore tests/HabitTracker.Tests
+
+      - name: Build
+        run: |
+          dotnet build src/HabitTracker.Functions --no-restore -c Release
+          dotnet build tests/HabitTracker.Tests --no-restore -c Release
+
+      - name: Test (unit tests only)
+        run: dotnet test tests/HabitTracker.Tests --no-build -c Release --filter "Category!=Integration"
+
+  template:
+    name: Validate SAM template
+    runs-on: ubuntu-latest
+    env:
+      AWS_DEFAULT_REGION: eu-central-1
+      AWS_ACCESS_KEY_ID: dummy
+      AWS_SECRET_ACCESS_KEY: dummy
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: aws-actions/setup-sam@v2
+        with:
+          use-installer: true
+
+      - name: Validate template
+        run: sam validate --lint
