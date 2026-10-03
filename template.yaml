@@ -7,10 +7,14 @@ Globals:
     Runtime: dotnet10
     MemorySize: 512
     Timeout: 30
+    Tracing: Active
     Environment:
       Variables:
         TABLE_NAME: !Ref HabitTrackerTable
         IS_LOCAL: "false"
+        POWERTOOLS_SERVICE_NAME: habit-tracker
+        POWERTOOLS_METRICS_NAMESPACE: HabitTracker
+        POWERTOOLS_LOG_LEVEL: Information
 
 Resources:
 
@@ -117,6 +121,7 @@ Resources:
           Type: HttpApi
           Properties:
             ApiId: !Ref HabitTrackerApi
+            PayloadFormatVersion: "1.0"
             Path: /habits
             Method: GET
 
@@ -133,6 +138,7 @@ Resources:
           Type: HttpApi
           Properties:
             ApiId: !Ref HabitTrackerApi
+            PayloadFormatVersion: "1.0"
             Path: /habits
             Method: POST
 
@@ -149,6 +155,7 @@ Resources:
           Type: HttpApi
           Properties:
             ApiId: !Ref HabitTrackerApi
+            PayloadFormatVersion: "1.0"
             Path: /habits/{id}
             Method: PUT
 
@@ -165,6 +172,7 @@ Resources:
           Type: HttpApi
           Properties:
             ApiId: !Ref HabitTrackerApi
+            PayloadFormatVersion: "1.0"
             Path: /habits/{id}
             Method: DELETE
 
@@ -182,6 +190,7 @@ Resources:
           Type: HttpApi
           Properties:
             ApiId: !Ref HabitTrackerApi
+            PayloadFormatVersion: "1.0"
             Path: /checkins
             Method: POST
 
@@ -198,6 +207,7 @@ Resources:
           Type: HttpApi
           Properties:
             ApiId: !Ref HabitTrackerApi
+            PayloadFormatVersion: "1.0"
             Path: /checkins/{habitId}/{date}
             Method: DELETE
 
@@ -215,6 +225,7 @@ Resources:
           Type: HttpApi
           Properties:
             ApiId: !Ref HabitTrackerApi
+            PayloadFormatVersion: "1.0"
             Path: /habits/{id}/stats
             Method: GET
 
@@ -231,6 +242,7 @@ Resources:
           Type: HttpApi
           Properties:
             ApiId: !Ref HabitTrackerApi
+            PayloadFormatVersion: "1.0"
             Path: /stats/summary
             Method: GET
 

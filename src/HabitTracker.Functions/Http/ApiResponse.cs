@@ -3,6 +3,7 @@ using System.Text.Json;
 using Amazon.DynamoDBv2.Model;
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
+using AWS.Lambda.Powertools.Logging;
 using HabitTracker.Application.Common;
 
 namespace HabitTracker.Functions.Http;
@@ -31,7 +32,10 @@ public static class ApiResponse
     {
         var userId = GetUserId(request);
         if (userId is null)
+        {
+            Logger.LogWarning("Request without a user identity was rejected");
             return Error(HttpStatusCode.Unauthorized, "Unauthorized.");
+        }
 
         try
         {
@@ -39,19 +43,22 @@ public static class ApiResponse
         }
         catch (ValidationException ex)
         {
+            Logger.LogWarning($"Validation failed: {ex.Message}");
             return Error(HttpStatusCode.BadRequest, ex.Message);
         }
         catch (KeyNotFoundException ex)
         {
+            Logger.LogInformation($"Not found: {ex.Message}");
             return Error(HttpStatusCode.NotFound, ex.Message);
         }
         catch (ConditionalCheckFailedException)
         {
+            Logger.LogWarning("Conditional check failed");
             return Error(HttpStatusCode.Conflict, "Resource already exists or was modified.");
         }
         catch (Exception ex)
         {
-            context.Logger.LogError($"Unhandled exception: {ex}");
+            Logger.LogError(ex, "Unhandled exception");
             return Error(HttpStatusCode.InternalServerError, "Internal server error.");
         }
     }

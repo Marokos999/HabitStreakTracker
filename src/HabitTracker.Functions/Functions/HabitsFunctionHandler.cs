@@ -1,5 +1,8 @@
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
+using AWS.Lambda.Powertools.Logging;
+using AWS.Lambda.Powertools.Metrics;
+using AWS.Lambda.Powertools.Tracing;
 using HabitTracker.Application.Habits.CreateHabit;
 using HabitTracker.Application.Habits.DeleteHabit;
 using HabitTracker.Application.Habits.GetHabits;
@@ -29,25 +32,33 @@ public class HabitsFunctionHandler
         deleteHabit = scope.ServiceProvider.GetRequiredService<DeleteHabitHandler>();
     }
 
-    public Task<APIGatewayProxyResponse> GetHabitsAsync(APIGatewayProxyRequest request, ILambdaContext context) =>
-        ApiResponse.ExecuteAsync(request, context, async userId =>
+    [Logging(ClearState = true)]
+    [Tracing]
+    public async Task<APIGatewayProxyResponse> GetHabitsAsync(APIGatewayProxyRequest request, ILambdaContext context) =>
+        await ApiResponse.ExecuteAsync(request, context, async userId =>
         {
             var result = await getHabits.Handle(new GetHabitsQuery(userId));
             return ApiResponse.Ok(result.Habits);
         });
 
-    public Task<APIGatewayProxyResponse> CreateHabitAsync(APIGatewayProxyRequest request, ILambdaContext context) =>
-        ApiResponse.ExecuteAsync(request, context, async userId =>
+    [Logging(ClearState = true)]
+    [Tracing]
+    [Metrics(CaptureColdStart = true)]
+    public async Task<APIGatewayProxyResponse> CreateHabitAsync(APIGatewayProxyRequest request, ILambdaContext context) =>
+        await ApiResponse.ExecuteAsync(request, context, async userId =>
         {
             var body = ApiResponse.ParseBody<HabitRequest>(request);
             var command = new CreateHabitCommand(userId, body.Name, body.Description, body.Frequency,
                                                  body.Color, body.TargetDaysPerWeek);
             var result = await createHabit.Handle(command);
+            Metrics.AddMetric("HabitCreated", 1, MetricUnit.Count);
             return ApiResponse.Created(result.Habit);
         });
 
-    public Task<APIGatewayProxyResponse> UpdateHabitAsync(APIGatewayProxyRequest request, ILambdaContext context) =>
-        ApiResponse.ExecuteAsync(request, context, async userId =>
+    [Logging(ClearState = true)]
+    [Tracing]
+    public async Task<APIGatewayProxyResponse> UpdateHabitAsync(APIGatewayProxyRequest request, ILambdaContext context) =>
+        await ApiResponse.ExecuteAsync(request, context, async userId =>
         {
             var habitId = ApiResponse.GetGuid(request, "id");
             var body = ApiResponse.ParseBody<HabitRequest>(request);
@@ -57,11 +68,15 @@ public class HabitsFunctionHandler
             return ApiResponse.NoContent();
         });
 
-    public Task<APIGatewayProxyResponse> DeleteHabitAsync(APIGatewayProxyRequest request, ILambdaContext context) =>
-        ApiResponse.ExecuteAsync(request, context, async userId =>
+    [Logging(ClearState = true)]
+    [Tracing]
+    [Metrics(CaptureColdStart = true)]
+    public async Task<APIGatewayProxyResponse> DeleteHabitAsync(APIGatewayProxyRequest request, ILambdaContext context) =>
+        await ApiResponse.ExecuteAsync(request, context, async userId =>
         {
             var habitId = ApiResponse.GetGuid(request, "id");
             await deleteHabit.Handle(new DeleteHabitCommand(userId, habitId));
+            Metrics.AddMetric("HabitDeleted", 1, MetricUnit.Count);
             return ApiResponse.NoContent();
         });
 

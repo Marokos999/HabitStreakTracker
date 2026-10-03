@@ -1,4 +1,5 @@
 using Amazon.DynamoDBv2;
+using AWS.Lambda.Powertools.Tracing;
 using HabitTracker.Application.CheckIns.CreateCheckIn;
 using HabitTracker.Application.CheckIns.DeleteCheckIn;
 using HabitTracker.Application.CheckIns.GetHabitStats;
@@ -32,7 +33,10 @@ public static class Startup
                     services.AddSingleton<IAmazonDynamoDB>(_ => new AmazonDynamoDBClient(
                         new AmazonDynamoDBConfig { ServiceURL = "http://dynamodb-local:8000" }));
                 else
+                {
+                    Tracing.RegisterForAllServices(); // X-Ray subsegments for DynamoDB calls
                     services.AddSingleton<IAmazonDynamoDB, AmazonDynamoDBClient>();
+                }
 
                 services.AddScoped<IHabitRepository, DynamoDbHabitRepository>();
                 services.AddScoped<ICheckInRepository, DynamoDbCheckInRepository>();

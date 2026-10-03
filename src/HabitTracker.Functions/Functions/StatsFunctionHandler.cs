@@ -1,5 +1,7 @@
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
+using AWS.Lambda.Powertools.Logging;
+using AWS.Lambda.Powertools.Tracing;
 using HabitTracker.Application.CheckIns.GetHabitStats;
 using HabitTracker.Application.Stats.GetSummary;
 using HabitTracker.Functions.Http;
@@ -19,16 +21,20 @@ public class StatsFunctionHandler
         getSummary = scope.ServiceProvider.GetRequiredService<GetSummaryHandler>();
     }
 
-    public Task<APIGatewayProxyResponse> GetHabitStatsAsync(APIGatewayProxyRequest request, ILambdaContext context) =>
-        ApiResponse.ExecuteAsync(request, context, async userId =>
+    [Logging(ClearState = true)]
+    [Tracing]
+    public async Task<APIGatewayProxyResponse> GetHabitStatsAsync(APIGatewayProxyRequest request, ILambdaContext context) =>
+        await ApiResponse.ExecuteAsync(request, context, async userId =>
         {
             var habitId = ApiResponse.GetGuid(request, "id");
             var result = await getHabitStats.Handle(new GetHabitStatsQuery(userId, habitId));
             return ApiResponse.Ok(HabitStatsResponse.From(result));
         });
 
-    public Task<APIGatewayProxyResponse> GetSummaryAsync(APIGatewayProxyRequest request, ILambdaContext context) =>
-        ApiResponse.ExecuteAsync(request, context, async userId =>
+    [Logging(ClearState = true)]
+    [Tracing]
+    public async Task<APIGatewayProxyResponse> GetSummaryAsync(APIGatewayProxyRequest request, ILambdaContext context) =>
+        await ApiResponse.ExecuteAsync(request, context, async userId =>
         {
             var result = await getSummary.Handle(new GetSummaryQuery(userId));
             return ApiResponse.Ok(result);

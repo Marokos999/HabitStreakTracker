@@ -1,5 +1,8 @@
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
+using AWS.Lambda.Powertools.Logging;
+using AWS.Lambda.Powertools.Metrics;
+using AWS.Lambda.Powertools.Tracing;
 using HabitTracker.Application.CheckIns.CreateCheckIn;
 using HabitTracker.Application.CheckIns.DeleteCheckIn;
 using HabitTracker.Application.Common;
@@ -20,8 +23,11 @@ public class CheckInsFunctionHandler
         deleteCheckIn = scope.ServiceProvider.GetRequiredService<DeleteCheckInHandler>();
     }
 
-    public Task<APIGatewayProxyResponse> CreateCheckInAsync(APIGatewayProxyRequest request, ILambdaContext context) =>
-        ApiResponse.ExecuteAsync(request, context, async userId =>
+    [Logging(ClearState = true)]
+    [Tracing]
+    [Metrics(CaptureColdStart = true)]
+    public async Task<APIGatewayProxyResponse> CreateCheckInAsync(APIGatewayProxyRequest request, ILambdaContext context) =>
+        await ApiResponse.ExecuteAsync(request, context, async userId =>
         {
             var body = ApiResponse.ParseBody<CheckInRequest>(request);
             if (body.HabitId == Guid.Empty)
@@ -30,17 +36,22 @@ public class CheckInsFunctionHandler
             var date = ApiResponse.ParseDate(body.Date, "date");
             var command = new CreateCheckInCommand(userId, body.HabitId, date, body.Note);
             var result = await createCheckIn.Handle(command);
+            Metrics.AddMetric("CheckInCreated", 1, MetricUnit.Count);
             return ApiResponse.Created(result.CheckIn);
         });
 
-    public Task<APIGatewayProxyResponse> DeleteCheckInAsync(APIGatewayProxyRequest request, ILambdaContext context) =>
-        ApiResponse.ExecuteAsync(request, context, async userId =>
+    [Logging(ClearState = true)]
+    [Tracing]
+    [Metrics(CaptureColdStart = true)]
+    public async Task<APIGatewayProxyResponse> DeleteCheckInAsync(APIGatewayProxyRequest request, ILambdaContext context) =>
+        await ApiResponse.ExecuteAsync(request, context, async userId =>
         {
             var habitId = ApiResponse.GetGuid(request, "habitId");
             string? rawDate = null;
             request.PathParameters?.TryGetValue("date", out rawDate);
             var date = ApiResponse.ParseDate(rawDate, "date");
             await deleteCheckIn.Handle(new DeleteCheckInCommand(userId, habitId, date));
+            Metrics.AddMetric("CheckInDeleted", 1, MetricUnit.Count);
             return ApiResponse.NoContent();
         });
 

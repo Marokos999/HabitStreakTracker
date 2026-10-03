@@ -41,7 +41,7 @@ The backend follows Clean Architecture:
 
 ## Tech stack
 
-.NET 10 · AWS Lambda · AWS SAM · API Gateway HTTP API · DynamoDB · Cognito · .NET MAUI · xUnit · Moq · Docker (DynamoDB Local)
+.NET 10 · AWS Lambda (Powertools: logging, tracing, metrics) · AWS SAM · API Gateway HTTP API · DynamoDB · Cognito · .NET MAUI · xUnit · Moq · Docker (DynamoDB Local)
 
 ## API
 
@@ -126,10 +126,14 @@ sam deploy --guided
 
 The stack creates the DynamoDB table, a Cognito user pool, hosted UI domain and app client (authorization code flow with PKCE), the HTTP API with a JWT authorizer and all Lambda functions. After deploying, copy the outputs `CognitoDomain` and `UserPoolClientId` into `src/HabitTracker.Mobile/Resources/Raw/cognito.json` (`domain`, `clientId`), and the output `ApiUrl` into `Resources/Raw/api.json` (`baseUrl`).
 
+
+## Observability
+
+The Lambda functions use AWS Lambda Powertools: structured JSON logs (with request id and cold start), X-Ray tracing (including DynamoDB calls) and CloudWatch custom metrics in the `HabitTracker` namespace (`HabitCreated`, `HabitDeleted`, `CheckInCreated`, `CheckInDeleted`, `ColdStart`). Tracing is enabled by `Tracing: Active` in `template.yaml` and is skipped for local runs.
+
 ## Roadmap
 
 - Completion rate that respects weekly habits and `targetDaysPerWeek`
-- Structured logging, tracing and metrics (AWS Lambda Powertools)
 - Return to the sign-in screen automatically when the session expires
 
 
