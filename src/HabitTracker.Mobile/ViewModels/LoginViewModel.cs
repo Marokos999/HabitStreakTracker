@@ -16,16 +16,16 @@ public class LoginViewModel(ICognitoAuthService authService, IServiceProvider se
 
     public bool HasError => !string.IsNullOrEmpty(_errorMessage);
 
-    public ICommand SignInCommand => new Command(async () => await SignInAsync());
-    public ICommand SignUpCommand => new Command(async () => await authService.SignUpAsync());
+    public ICommand SignInCommand => new Command(async () => await AuthenticateAsync(authService.SignInAsync));
+    public ICommand SignUpCommand => new Command(async () => await AuthenticateAsync(authService.SignUpAsync));
 
-    private async Task SignInAsync()
+    private async Task AuthenticateAsync(Func<Task<string?>> authenticate)
     {
         IsBusy = true;
         ErrorMessage = null;
         try
         {
-            var token = await authService.SignInAsync();
+            var token = await authenticate();
             if (token is not null)
             {
                 await MainThread.InvokeOnMainThreadAsync(() =>
@@ -33,7 +33,7 @@ public class LoginViewModel(ICognitoAuthService authService, IServiceProvider se
             }
             else
             {
-                ErrorMessage = "Sign in failed. Please try again.";
+                ErrorMessage = "Sign in was cancelled or failed. Please try again.";
             }
         }
         catch (Exception ex)

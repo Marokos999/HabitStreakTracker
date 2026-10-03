@@ -59,9 +59,35 @@ Resources:
     Properties:
       UserPoolId: !Ref UserPool
       ClientName: HabitTrackerClient
+      GenerateSecret: false
       ExplicitAuthFlows:
-        - ALLOW_USER_PASSWORD_AUTH
+        - ALLOW_USER_SRP_AUTH
         - ALLOW_REFRESH_TOKEN_AUTH
+      SupportedIdentityProviders:
+        - COGNITO
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthFlows:
+        - code
+      AllowedOAuthScopes:
+        - openid
+        - email
+      CallbackURLs:
+        - habittracker://callback
+      LogoutURLs:
+        - habittracker://callback
+      AccessTokenValidity: 1
+      RefreshTokenValidity: 30
+      TokenValidityUnits:
+        AccessToken: hours
+        RefreshToken: days
+      PreventUserExistenceErrors: ENABLED
+
+  # Hosted UI domain used by the mobile app (PKCE authorization code flow)
+  UserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      UserPoolId: !Ref UserPool
+      Domain: !Sub habittracker-${AWS::AccountId}
 
   # ── API Gateway ───────────────────────────────────────────────────────────
   HabitTrackerApi:
@@ -218,3 +244,6 @@ Outputs:
   UserPoolClientId:
     Description: Cognito User Pool Client ID
     Value: !Ref UserPoolClient
+  CognitoDomain:
+    Description: Cognito hosted UI domain (use as "domain" in cognito.json)
+    Value: !Sub ${UserPoolDomain}.auth.${AWS::Region}.amazoncognito.com

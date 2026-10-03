@@ -5,6 +5,6 @@ public interface ICognitoAuthService
     Task<bool> IsAuthenticatedAsync();
     Task<string?> GetAccessTokenAsync();
     Task<string?> SignInAsync();
-    Task SignUpAsync();
+    Task<string?> SignUpAsync();
     Task SignOutAsync();
 }

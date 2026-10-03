@@ -22,6 +22,7 @@ public static class MauiProgram
 #if DEBUG
         builder.Services.AddSingleton<ICognitoAuthService, DevAuthService>();
 #else
+        builder.Services.AddSingleton(_ => CognitoSettings.Load());
         builder.Services.AddSingleton<ICognitoAuthService, CognitoAuthService>();
 #endif
         builder.Services.AddSingleton<SecureStorageService>();

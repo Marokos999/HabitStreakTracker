@@ -1,0 +1,5 @@
+{
+  "domain": "YOUR_COGNITO_DOMAIN.auth.eu-central-1.amazoncognito.com",
+  "clientId": "YOUR_USER_POOL_CLIENT_ID",
+  "callbackUrl": "habittracker://callback"
+}
