@@ -115,7 +115,7 @@ Release builds use Cognito: set `Domain` and `ClientId` in `CognitoAuthService` 
 dotnet test tests/HabitTracker.Tests
 ```
 
-The integration tests in `Integration/` need DynamoDB Local running (`docker compose up -d`).
+The integration tests in `Integration/` start a throwaway DynamoDB Local container via Testcontainers, so Docker must be running. To skip them: `dotnet test tests/HabitTracker.Tests --filter "Category!=Integration"`.
 
 ## Deploy to AWS
 

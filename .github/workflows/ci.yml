@@ -32,8 +32,8 @@ jobs:
           dotnet build src/HabitTracker.Functions --no-restore -c Release
           dotnet build tests/HabitTracker.Tests --no-restore -c Release
 
-      - name: Test (unit tests only)
-        run: dotnet test tests/HabitTracker.Tests --no-build -c Release --filter "Category!=Integration"
+      - name: Test (unit and Testcontainers integration tests)
+        run: dotnet test tests/HabitTracker.Tests --no-build -c Release
 
   template:
     name: Validate SAM template

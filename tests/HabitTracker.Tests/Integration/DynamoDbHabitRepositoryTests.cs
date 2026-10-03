@@ -1,4 +1,3 @@
-using Amazon.DynamoDBv2;
 using HabitTracker.Domain.Entities;
 using HabitTracker.Domain.Enums;
 using HabitTracker.Infrastructure.DynamoDB;
@@ -6,24 +5,11 @@ using HabitTracker.Infrastructure.DynamoDB;
 namespace HabitTracker.Tests.Integration;
 
 [Trait("Category", "Integration")]
-public class DynamoDbHabitRepositoryTests : IAsyncLifetime
+[Collection(DynamoDbCollection.Name)]
+public class DynamoDbHabitRepositoryTests(DynamoDbFixture fixture)
 {
-    private readonly IAmazonDynamoDB _dynamo;
-    private readonly DynamoDbHabitRepository _repo;
-    private const string UserId = "integration-test-user";
-
-    public DynamoDbHabitRepositoryTests()
-    {
-        _dynamo = new AmazonDynamoDBClient(new AmazonDynamoDBConfig
-        {
-            ServiceURL = "http://localhost:8000"
-        });
-        _repo = new DynamoDbHabitRepository(_dynamo);
-    }
-
-    public Task InitializeAsync() => Task.CompletedTask;
-
-    public Task DisposeAsync() => Task.CompletedTask;
+    private readonly DynamoDbHabitRepository _repo = new(fixture.Client);
+    private readonly string UserId = $"user-{Guid.NewGuid()}";
 
     [Fact]
     public async Task CreateAndGetById_ReturnsHabit()
