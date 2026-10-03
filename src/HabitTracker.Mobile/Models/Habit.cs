@@ -11,4 +11,7 @@ public class Habit
     public int TargetDaysPerWeek { get; set; }
     public bool IsArchived { get; set; }
     public DateTime CreatedAt { get; set; }
+
+    // Set by GET /habits: whether the habit was already checked in on the device date
+    public bool CheckedInToday { get; set; }
 }

@@ -50,7 +50,7 @@ public class HabitDetailViewModel(IHabitService habitService) : BaseViewModel
         try { Streak = await habitService.GetStatsAsync(_habit.Id); }
         catch (ApiException ex)
         {
-            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
+            await ErrorAlert.ShowAsync(ex);
         }
         finally { IsBusy = false; }
     }
@@ -67,7 +67,7 @@ public class HabitDetailViewModel(IHabitService habitService) : BaseViewModel
         }
         catch (Exception ex)
         {
-            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
+            await ErrorAlert.ShowAsync(ex);
         }
         finally { IsBusy = false; }
     }

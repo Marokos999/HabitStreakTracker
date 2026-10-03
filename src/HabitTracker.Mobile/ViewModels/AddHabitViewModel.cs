@@ -54,7 +54,7 @@ public class AddHabitViewModel(IHabitService habitService) : BaseViewModel
         }
         catch (Exception ex)
         {
-            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
+            await ErrorAlert.ShowAsync(ex);
         }
         finally { IsBusy = false; }
     }

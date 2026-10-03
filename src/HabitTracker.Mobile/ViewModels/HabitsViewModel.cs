@@ -44,14 +44,13 @@ public class HabitsViewModel(IHabitService habitService) : BaseViewModel
         {
             var habits = await habitService.GetHabitsAsync();
 
-            // Remember which habits were already checked in this session
-            var completedIds = CompletedHabits.Select(h => h.Id).ToHashSet();
+            // The server tells which habits are already checked in today, so this survives app restarts
             ActiveHabits.Clear();
             CompletedHabits.Clear();
 
             foreach (var h in habits)
             {
-                if (completedIds.Contains(h.Id))
+                if (h.CheckedInToday)
                     CompletedHabits.Add(h);
                 else
                     ActiveHabits.Add(h);
@@ -66,7 +65,7 @@ public class HabitsViewModel(IHabitService habitService) : BaseViewModel
             _loadFailed = true;
             _loadError = ex.Message;
             if (!IsEmpty)
-                await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK"); // keep showing the old list
+                await ErrorAlert.ShowAsync(ex); // keep showing the old list
         }
         finally
         {
@@ -93,6 +92,7 @@ public class HabitsViewModel(IHabitService habitService) : BaseViewModel
                 await onSuccess();
 
             ActiveHabits.Remove(habit);
+            habit.CheckedInToday = true;
             if (!CompletedHabits.Any(h => h.Id == habit.Id))
                 CompletedHabits.Add(habit);
             HasDoneSection = CompletedHabits.Count > 0;
@@ -100,7 +100,7 @@ public class HabitsViewModel(IHabitService habitService) : BaseViewModel
         }
         catch (ApiException ex)
         {
-            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
+            await ErrorAlert.ShowAsync(ex);
         }
     }
 
@@ -116,7 +116,7 @@ public class HabitsViewModel(IHabitService habitService) : BaseViewModel
         }
         catch (ApiException ex)
         {
-            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
+            await ErrorAlert.ShowAsync(ex);
         }
     }
 

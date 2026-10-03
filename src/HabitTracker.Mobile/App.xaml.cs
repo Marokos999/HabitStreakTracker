@@ -14,6 +14,7 @@ public partial class App : Application
         InitializeComponent();
         _authService = authService;
         _serviceProvider = serviceProvider;
+        _authService.SessionExpired += OnSessionExpired;
     }
 
     protected override Window CreateWindow(IActivationState? activationState)
@@ -27,6 +28,17 @@ public partial class App : Application
         base.OnStart();
         var isAuthenticated = await _authService.IsAuthenticatedAsync();
         if (!isAuthenticated)
-            Windows[0].Page = _serviceProvider.GetRequiredService<LoginPage>();
+            ShowLogin();
+    }
+
+    // Token rejected or refresh failed: go back to the sign-in screen
+    private void OnSessionExpired() => MainThread.BeginInvokeOnMainThread(ShowLogin);
+
+    private void ShowLogin()
+    {
+        if (Windows.Count == 0 || Windows[0].Page is LoginPage)
+            return; // already on the sign-in screen (several requests can fail at once)
+
+        Windows[0].Page = _serviceProvider.GetRequiredService<LoginPage>();
     }
 }

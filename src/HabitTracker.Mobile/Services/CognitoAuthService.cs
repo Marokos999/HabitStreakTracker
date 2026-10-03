@@ -34,6 +34,15 @@ public class CognitoAuthService(SecureStorageService storage, CognitoSettings se
     // The hosted UI sign-up page returns an authorization code once the user has confirmed the account.
     public Task<string?> SignUpAsync() => AuthenticateAsync("signup");
 
+    public event Action? SessionExpired;
+
+    public Task HandleUnauthorizedAsync()
+    {
+        storage.ClearTokens();
+        SessionExpired?.Invoke();
+        return Task.CompletedTask;
+    }
+
     public async Task SignOutAsync()
     {
         storage.ClearTokens();

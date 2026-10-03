@@ -4,7 +4,11 @@ namespace HabitTracker.Domain.Services;
 
 public static class StreakCalculator
 {
-    public static StreakResult Calculate(IEnumerable<DateOnly> dates, DateOnly today)
+    public const int CompletionWindowDays = 30;
+
+    // CompletionRate compares the check-ins of the last 30 days with how many the habit's weekly target
+    // asks for in that window (targetDaysPerWeek * 30 / 7), so a 3x-per-week habit can reach 100%.
+    public static StreakResult Calculate(IEnumerable<DateOnly> dates, DateOnly today, int targetDaysPerWeek = 7)
     {
         var sorted = dates.Distinct().OrderByDescending(d => d).ToList();
         if (sorted.Count == 0)
@@ -34,7 +38,15 @@ public static class StreakCalculator
         if (sorted[0] < today.AddDays(-1))
             current = 0;
 
-        var completionRate = Math.Min(sorted.Count / 30.0 * 100, 100);
-        return new StreakResult(current, longest, sorted.Count, completionRate);
+        return new StreakResult(current, longest, sorted.Count, CompletionRate(sorted, today, targetDaysPerWeek));
+    }
+
+    private static double CompletionRate(List<DateOnly> dates, DateOnly today, int targetDaysPerWeek)
+    {
+        var windowStart = today.AddDays(-(CompletionWindowDays - 1));
+        var inWindow = dates.Count(d => d >= windowStart && d <= today);
+        var expected = Math.Clamp(targetDaysPerWeek, 1, 7) * CompletionWindowDays / 7.0;
+
+        return Math.Min(inWindow / expected * 100, 100);
     }
 }

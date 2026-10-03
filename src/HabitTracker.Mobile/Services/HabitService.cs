@@ -10,7 +10,7 @@ public class HabitService(HttpClient http) : IHabitService
 {
     public async Task<List<Habit>> GetHabitsAsync()
     {
-        var result = await SendAsync<List<Habit>>(() => http.GetAsync("/habits"));
+        var result = await SendAsync<List<Habit>>(() => http.GetAsync($"/habits?date={Today()}"));
         return result ?? [];
     }
 
@@ -40,7 +40,7 @@ public class HabitService(HttpClient http) : IHabitService
         await SendAsync(() => http.PostAsJsonAsync("/checkins", new
         {
             habitId,
-            date = DateOnly.FromDateTime(DateTime.Today).ToString("yyyy-MM-dd"),
+            date = Today(),
             note = (string?)null
         }));
 
@@ -59,6 +59,10 @@ public class HabitService(HttpClient http) : IHabitService
         var result = await SendAsync<SummaryResult>(() => http.GetAsync("/stats/summary"));
         return result ?? new SummaryResult();
     }
+
+    // Device-local date, formatted independently of the device culture
+    private static string Today() =>
+        DateOnly.FromDateTime(DateTime.Today).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
 
     private async Task<T?> SendAsync<T>(Func<Task<HttpResponseMessage>> send)
     {

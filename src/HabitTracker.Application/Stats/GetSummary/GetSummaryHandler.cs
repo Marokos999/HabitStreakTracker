@@ -21,7 +21,7 @@ public class GetSummaryHandler(IHabitRepository habitRepo, ICheckInRepository ch
             var checkIns = await checkInRepo.GetByHabitAsync(query.UserId, habit.Id);
             var dates = checkIns.Select(c => c.Date).ToList();
             if (dates.Contains(today)) checkedInToday++;
-            var streak = StreakCalculator.Calculate(dates, DateOnly.FromDateTime(DateTime.UtcNow));
+            var streak = StreakCalculator.Calculate(dates, today, habit.TargetDaysPerWeek);
             if (streak.CurrentStreak > bestStreak) bestStreak = streak.CurrentStreak;
             totalCompletion += streak.CompletionRate;
         }

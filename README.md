@@ -49,11 +49,11 @@ All endpoints require a Cognito JWT (`Authorization: Bearer <token>`). Errors ar
 
 | Method | Path | Description |
 |---|---|---|
-| `GET` | `/habits` | List habits |
+| `GET` | `/habits?date=yyyy-MM-dd` | List habits, each with `checkedInToday` for the given day (defaults to today in UTC) |
 | `POST` | `/habits` | Create a habit |
 | `PUT` | `/habits/{id}` | Update a habit |
 | `DELETE` | `/habits/{id}` | Archive a habit |
-| `GET` | `/habits/{id}/stats` | Streak statistics for a habit, plus `checkInDates` of the last 12 weeks (used for the heatmap) |
+| `GET` | `/habits/{id}/stats` | Streak statistics for a habit, plus `checkInDates` of the last 12 weeks (used for the heatmap). Completion rate compares the last 30 days with the habit's `targetDaysPerWeek` |
 | `POST` | `/checkins` | Create a check-in (`habitId`, `date`, `note`) |
 | `DELETE` | `/checkins/{habitId}/{date}` | Delete a check-in (`date` as `yyyy-MM-dd`) |
 | `GET` | `/stats/summary` | Summary across all habits |
@@ -126,16 +126,9 @@ sam deploy --guided
 
 The stack creates the DynamoDB table, a Cognito user pool, hosted UI domain and app client (authorization code flow with PKCE), the HTTP API with a JWT authorizer and all Lambda functions. After deploying, copy the outputs `CognitoDomain` and `UserPoolClientId` into `src/HabitTracker.Mobile/Resources/Raw/cognito.json` (`domain`, `clientId`), and the output `ApiUrl` into `Resources/Raw/api.json` (`baseUrl`).
 
-
 ## Observability
 
 The Lambda functions use AWS Lambda Powertools: structured JSON logs (with request id and cold start), X-Ray tracing (including DynamoDB calls) and CloudWatch custom metrics in the `HabitTracker` namespace (`HabitCreated`, `HabitDeleted`, `CheckInCreated`, `CheckInDeleted`, `ColdStart`). Tracing is enabled by `Tracing: Active` in `template.yaml` and is skipped for local runs.
-
-## Roadmap
-
-- Completion rate that respects weekly habits and `targetDaysPerWeek`
-- Return to the sign-in screen automatically when the session expires
-
 
 ## License
 

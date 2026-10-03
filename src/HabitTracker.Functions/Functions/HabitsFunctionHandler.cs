@@ -7,6 +7,7 @@ using HabitTracker.Application.Habits.CreateHabit;
 using HabitTracker.Application.Habits.DeleteHabit;
 using HabitTracker.Application.Habits.GetHabits;
 using HabitTracker.Application.Habits.UpdateHabit;
+using HabitTracker.Domain.Entities;
 using HabitTracker.Domain.Enums;
 using HabitTracker.Functions.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,8 +38,13 @@ public class HabitsFunctionHandler
     public async Task<APIGatewayProxyResponse> GetHabitsAsync(APIGatewayProxyRequest request, ILambdaContext context) =>
         await ApiResponse.ExecuteAsync(request, context, async userId =>
         {
-            var result = await getHabits.Handle(new GetHabitsQuery(userId));
-            return ApiResponse.Ok(result.Habits);
+            DateOnly? date = null;
+            if (request.QueryStringParameters is not null
+                && request.QueryStringParameters.TryGetValue("date", out var rawDate))
+                date = ApiResponse.ParseDate(rawDate, "date");
+
+            var result = await getHabits.Handle(new GetHabitsQuery(userId, date));
+            return ApiResponse.Ok(result.Habits.Select(h => HabitResponse.From(h, result.CheckedInHabitIds.Contains(h.Id))));
         });
 
     [Logging(ClearState = true)]
@@ -79,6 +85,24 @@ public class HabitsFunctionHandler
             Metrics.AddMetric("HabitDeleted", 1, MetricUnit.Count);
             return ApiResponse.NoContent();
         });
+
+    // Habit as returned by GET /habits, including whether it was checked in on the requested day.
+    public record HabitResponse(
+        Guid Id,
+        string UserId,
+        string Name,
+        string? Description,
+        HabitFrequency Frequency,
+        string Color,
+        int TargetDaysPerWeek,
+        bool IsArchived,
+        DateTime CreatedAt,
+        bool CheckedInToday)
+    {
+        public static HabitResponse From(Habit habit, bool checkedInToday) => new(
+            habit.Id, habit.UserId, habit.Name, habit.Description, habit.Frequency, habit.Color,
+            habit.TargetDaysPerWeek, habit.IsArchived, habit.CreatedAt, checkedInToday);
+    }
 
     public record HabitRequest
     (
