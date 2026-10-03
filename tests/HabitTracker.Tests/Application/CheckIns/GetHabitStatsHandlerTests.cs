@@ -40,5 +40,27 @@ public class GetHabitStatsHandlerTests
 
         Assert.Equal(0, result.Streak.CurrentStreak);
         Assert.Equal(0, result.Streak.TotalCheckIns);
+        Assert.Empty(result.RecentCheckInDates);
+    }
+
+    [Fact]
+    public async Task Handle_RecentCheckInDates_OnlyContainsLastWindowSortedAscending()
+    {
+        var habitId = Guid.NewGuid();
+        var oldest = Today.AddDays(-(GetHabitStatsHandler.RecentDays - 1));
+        var repo = new Mock<ICheckInRepository>();
+        repo.Setup(r => r.GetByHabitAsync("user1", habitId)).ReturnsAsync(
+        [
+            new CheckIn { HabitId = habitId, UserId = "user1", Date = Today },
+            new CheckIn { HabitId = habitId, UserId = "user1", Date = oldest },
+            new CheckIn { HabitId = habitId, UserId = "user1", Date = oldest.AddDays(-1) },
+            new CheckIn { HabitId = habitId, UserId = "user1", Date = Today.AddDays(-10) }
+        ]);
+
+        var handler = new GetHabitStatsHandler(repo.Object);
+        var result = await handler.Handle(new GetHabitStatsQuery("user1", habitId));
+
+        Assert.Equal([oldest, Today.AddDays(-10), Today], result.RecentCheckInDates);
+        Assert.Equal(4, result.Streak.TotalCheckIns); // streak stats still cover the full history
     }
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:HabitTracker.Mobile.Controls"
              x:Class="HabitTracker.Mobile.Pages.HabitDetailPage"
              Title="{Binding HabitName}">
 
@@ -47,9 +48,13 @@
                         StrokeShape="RoundRectangle 14"
                         StrokeThickness="1">
                     <VerticalStackLayout Spacing="4">
-                        <Label Text="🔥 Current Streak" FontSize="12" TextColor="{StaticResource Gray400}" />
-                        <Label Text="{Binding Streak.CurrentStreak, StringFormat='{0} days'}"
-                               FontSize="28" FontAttributes="Bold" TextColor="{StaticResource Primary}" />
+                        <Label Text="Current Streak" FontSize="12" TextColor="{StaticResource Gray400}" />
+                        <HorizontalStackLayout Spacing="6">
+                            <Label Text="🔥" FontSize="28" VerticalOptions="Center"
+                                   IsVisible="{Binding HasActiveStreak}" />
+                            <Label Text="{Binding Streak.CurrentStreak, StringFormat='{0} days'}"
+                                   FontSize="28" FontAttributes="Bold" TextColor="{StaticResource Primary}" />
+                        </HorizontalStackLayout>
                     </VerticalStackLayout>
                 </Border>
 
@@ -76,13 +81,31 @@
                 <Border Grid.Row="1" Grid.Column="1" Padding="16"
                         StrokeShape="RoundRectangle 14"
                         StrokeThickness="1">
-                    <VerticalStackLayout Spacing="4">
-                        <Label Text="📊 Completion" FontSize="12" TextColor="{StaticResource Gray400}" />
-                        <Label Text="{Binding Streak.CompletionRate, StringFormat='{0:F0}%'}"
-                               FontSize="28" FontAttributes="Bold" />
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Completion (30 days)" FontSize="12" TextColor="{StaticResource Gray400}" />
+                        <Grid HeightRequest="64" WidthRequest="64" HorizontalOptions="Start">
+                            <controls:ProgressRing Progress="{Binding Streak.CompletionRate}"
+                                                   RingColor="{Binding HabitColor}" />
+                            <Label Text="{Binding Streak.CompletionRate, StringFormat='{0:F0}%'}"
+                                   FontSize="14" FontAttributes="Bold"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Grid>
                     </VerticalStackLayout>
                 </Border>
             </Grid>
+
+            <!-- Heatmap -->
+            <Border Margin="16,0,16,16" Padding="16"
+                    StrokeShape="RoundRectangle 14"
+                    StrokeThickness="1">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Last 12 weeks" FontSize="12" TextColor="{StaticResource Gray400}" />
+                    <controls:StreakHeatmap Dates="{Binding Streak.CheckInDates}"
+                                            CellColor="{Binding HabitColor}" />
+                    <Label Text="Each square is a day. Colored squares are check-ins."
+                           FontSize="11" TextColor="{StaticResource Gray400}" />
+                </VerticalStackLayout>
+            </Border>
 
             <!-- Check In button -->
             <Button Text="✓  Check In Today"

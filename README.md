@@ -53,7 +53,7 @@ All endpoints require a Cognito JWT (`Authorization: Bearer <token>`). Errors ar
 | `POST` | `/habits` | Create a habit |
 | `PUT` | `/habits/{id}` | Update a habit |
 | `DELETE` | `/habits/{id}` | Archive a habit |
-| `GET` | `/habits/{id}/stats` | Streak statistics for a habit |
+| `GET` | `/habits/{id}/stats` | Streak statistics for a habit, plus `checkInDates` of the last 12 weeks (used for the heatmap) |
 | `POST` | `/checkins` | Create a check-in (`habitId`, `date`, `note`) |
 | `DELETE` | `/checkins/{habitId}/{date}` | Delete a check-in (`date` as `yyyy-MM-dd`) |
 | `GET` | `/stats/summary` | Summary across all habits |
@@ -128,7 +128,10 @@ The stack creates the DynamoDB table, a Cognito user pool, hosted UI domain and 
 
 ## Roadmap
 
-- Dark mode and streak heatmap in the UI
+- Completion rate that respects weekly habits and `targetDaysPerWeek`
+- Structured logging, tracing and metrics (AWS Lambda Powertools)
+- Return to the sign-in screen automatically when the session expires
+
 
 ## License
 

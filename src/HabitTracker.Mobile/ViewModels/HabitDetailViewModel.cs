@@ -29,8 +29,15 @@ public class HabitDetailViewModel(IHabitService habitService) : BaseViewModel
     public StreakResult? Streak
     {
         get => _streak;
-        set { _streak = value; OnPropertyChanged(); }
+        set
+        {
+            _streak = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(HasActiveStreak));
+        }
     }
+
+    public bool HasActiveStreak => _streak?.CurrentStreak > 0;
 
     public ICommand CheckInCommand => new Command(async () => await CheckInAsync());
     public ICommand NavigateToEditCommand => new Command(async () =>

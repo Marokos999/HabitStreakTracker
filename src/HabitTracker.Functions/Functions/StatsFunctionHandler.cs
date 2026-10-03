@@ -24,7 +24,7 @@ public class StatsFunctionHandler
         {
             var habitId = ApiResponse.GetGuid(request, "id");
             var result = await getHabitStats.Handle(new GetHabitStatsQuery(userId, habitId));
-            return ApiResponse.Ok(result.Streak);
+            return ApiResponse.Ok(HabitStatsResponse.From(result));
         });
 
     public Task<APIGatewayProxyResponse> GetSummaryAsync(APIGatewayProxyRequest request, ILambdaContext context) =>
@@ -33,4 +33,20 @@ public class StatsFunctionHandler
             var result = await getSummary.Handle(new GetSummaryQuery(userId));
             return ApiResponse.Ok(result);
         });
+
+    // Streak fields stay at the top level, so existing clients keep working.
+    public record HabitStatsResponse(
+        int CurrentStreak,
+        int LongestStreak,
+        int TotalCheckIns,
+        double CompletionRate,
+        IReadOnlyList<DateOnly> CheckInDates)
+    {
+        public static HabitStatsResponse From(GetHabitStatsResult result) => new(
+            result.Streak.CurrentStreak,
+            result.Streak.LongestStreak,
+            result.Streak.TotalCheckIns,
+            result.Streak.CompletionRate,
+            result.RecentCheckInDates);
+    }
 }
