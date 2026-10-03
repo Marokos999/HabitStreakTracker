@@ -9,7 +9,7 @@ public class GetHabitStatsHandler(ICheckInRepository repo)
   {
     var checkIns = await repo.GetByHabitAsync(query.UsrId, query.HabitId);
     var dates = checkIns.Select(c => c.Date);
-    var streak = StreakCalculator.Calculate(dates);
+    var streak = StreakCalculator.Calculate(dates, DateOnly.FromDateTime(DateTime.UtcNow));
     return new GetHabitStatsResult(streak);
   }
 }
