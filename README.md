@@ -107,7 +107,7 @@ In `DEBUG` builds the app uses `DevAuthService` (no login) and calls `http://127
 dotnet build src/HabitTracker.Mobile -f net10.0-android
 ```
 
-Release builds sign in through the Cognito hosted UI using the authorization code flow with PKCE. Access tokens are refreshed automatically with the refresh token and stored in the platform secure storage. Fill in `domain` and `clientId` in `Resources/Raw/cognito.json` after deploying (see below).
+Release builds sign in through the Cognito hosted UI using the authorization code flow with PKCE. Access tokens are refreshed automatically with the refresh token and stored in the platform secure storage. After deploying, fill in `domain` and `clientId` in `Resources/Raw/cognito.json` and `baseUrl` in `Resources/Raw/api.json` (see below). Release builds talk to the API over HTTPS only; plain HTTP is enabled for Debug builds. Read requests are retried with backoff, and API errors are shown to the user as readable messages.
 
 ### Tests
 
@@ -124,7 +124,7 @@ sam build
 sam deploy --guided
 ```
 
-The stack creates the DynamoDB table, a Cognito user pool, hosted UI domain and app client (authorization code flow with PKCE), the HTTP API with a JWT authorizer and all Lambda functions. After deploying, copy the outputs `CognitoDomain` and `UserPoolClientId` into `src/HabitTracker.Mobile/Resources/Raw/cognito.json` (`domain`, `clientId`) and use `ApiUrl` as the API base URL in the mobile app.
+The stack creates the DynamoDB table, a Cognito user pool, hosted UI domain and app client (authorization code flow with PKCE), the HTTP API with a JWT authorizer and all Lambda functions. After deploying, copy the outputs `CognitoDomain` and `UserPoolClientId` into `src/HabitTracker.Mobile/Resources/Raw/cognito.json` (`domain`, `clientId`), and the output `ApiUrl` into `Resources/Raw/api.json` (`baseUrl`).
 
 ## Roadmap
 

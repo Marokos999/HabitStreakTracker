@@ -35,7 +35,7 @@ public class StatsViewModel(IHabitService habitService) : BaseViewModel
             OnPropertyChanged(nameof(TodayProgress));
             OnPropertyChanged(nameof(CompletionProgress));
         }
-        catch (HttpRequestException)
+        catch (ApiException)
         {
             HasError = true;
         }

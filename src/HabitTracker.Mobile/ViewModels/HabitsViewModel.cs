@@ -49,7 +49,10 @@ public class HabitsViewModel(IHabitService habitService) : BaseViewModel
             HasDoneSection = CompletedHabits.Count > 0;
             OnPropertyChanged(nameof(IsEmpty));
         }
-        catch (HttpRequestException) { }
+        catch (ApiException ex)
+        {
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
+        }
         finally { IsBusy = false; }
     }
 
@@ -70,9 +73,9 @@ public class HabitsViewModel(IHabitService habitService) : BaseViewModel
             HasDoneSection = CompletedHabits.Count > 0;
             OnPropertyChanged(nameof(IsEmpty));
         }
-        catch (HttpRequestException)
+        catch (ApiException ex)
         {
-            await Shell.Current.DisplayAlertAsync("Error", "Could not reach server. Is SAM running?", "OK");
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
 
@@ -86,6 +89,9 @@ public class HabitsViewModel(IHabitService habitService) : BaseViewModel
             HasDoneSection = CompletedHabits.Count > 0;
             OnPropertyChanged(nameof(IsEmpty));
         }
-        catch (HttpRequestException) { }
+        catch (ApiException ex)
+        {
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
+        }
     }
 }

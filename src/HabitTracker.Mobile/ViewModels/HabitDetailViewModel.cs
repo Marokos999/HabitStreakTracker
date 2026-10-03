@@ -41,7 +41,10 @@ public class HabitDetailViewModel(IHabitService habitService) : BaseViewModel
         if (_habit is null) return;
         IsBusy = true;
         try { Streak = await habitService.GetStatsAsync(_habit.Id); }
-        catch (HttpRequestException) { }
+        catch (ApiException ex)
+        {
+            await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
+        }
         finally { IsBusy = false; }
     }
 

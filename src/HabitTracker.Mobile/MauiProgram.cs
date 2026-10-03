@@ -1,6 +1,7 @@
 using HabitTracker.Mobile.Pages;
 using HabitTracker.Mobile.Services;
 using HabitTracker.Mobile.ViewModels;
+using Microsoft.Extensions.Http.Resilience;
 using Microsoft.Extensions.Logging;
 
 namespace HabitTracker.Mobile;
@@ -28,16 +29,26 @@ public static class MauiProgram
         builder.Services.AddSingleton<SecureStorageService>();
 
         // HTTP Client with auth header
-#if ANDROID
-        var baseUrl = "http://10.0.2.2:3000";
+#if DEBUG
+    #if ANDROID
+        var baseUrl = "http://10.0.2.2:3000"; // sam local start-api, seen from the Android emulator
+    #else
+        var baseUrl = "http://127.0.0.1:3000"; // sam local start-api
+    #endif
 #else
-        var baseUrl = "http://127.0.0.1:3000";
+        var baseUrl = ApiSettings.Load().BaseUrl;
 #endif
         builder.Services.AddTransient<AuthHeaderHandler>();
         builder.Services.AddHttpClient<IHabitService, HabitService>(client =>
-        {
-            client.BaseAddress = new Uri(baseUrl);
-        }).AddHttpMessageHandler<AuthHeaderHandler>();
+            {
+                client.BaseAddress = new Uri(baseUrl);
+            })
+            .AddHttpMessageHandler<AuthHeaderHandler>()
+            .AddStandardResilienceHandler(options =>
+            {
+                options.Retry.MaxRetryAttempts = 3;
+                options.Retry.DisableForUnsafeHttpMethods(); // never retry POST (e.g. create habit)
+            });
 
         // ViewModels
         builder.Services.AddTransient<HabitsViewModel>();
