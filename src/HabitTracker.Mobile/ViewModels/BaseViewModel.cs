@@ -10,8 +10,16 @@ public class BaseViewModel : INotifyPropertyChanged
     public bool IsBusy
     {
         get => _isBusy;
-        set { _isBusy = value; OnPropertyChanged(); }
+        set
+        {
+            _isBusy = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(IsNotBusy));
+        }
     }
+
+    // For disabling buttons while a request is running
+    public bool IsNotBusy => !_isBusy;
 
     public event PropertyChangedEventHandler? PropertyChanged;
 

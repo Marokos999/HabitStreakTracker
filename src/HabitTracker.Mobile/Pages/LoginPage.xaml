@@ -47,6 +47,7 @@
                     FontSize="16" FontAttributes="Bold"
                     BackgroundColor="White"
                     TextColor="{StaticResource Primary}"
+                    IsEnabled="{Binding IsNotBusy}"
                     Command="{Binding SignInCommand}"
                     Margin="0,0,0,12" />
 
@@ -58,6 +59,7 @@
                     BorderColor="#FFFFFF50"
                     BorderWidth="1.5"
                     TextColor="White"
+                    IsEnabled="{Binding IsNotBusy}"
                     Command="{Binding SignUpCommand}"
                     Margin="0,0,0,16" />
 

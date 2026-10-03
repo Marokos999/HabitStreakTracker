@@ -58,6 +58,7 @@ public class HabitDetailViewModel(IHabitService habitService) : BaseViewModel
     private async Task CheckInAsync()
     {
         if (_habit is null) return;
+        IsBusy = true; // disables the button while the request runs
         try
         {
             await habitService.CheckInAsync(_habit.Id);
@@ -68,5 +69,6 @@ public class HabitDetailViewModel(IHabitService habitService) : BaseViewModel
         {
             await Shell.Current.DisplayAlertAsync("Error", ex.Message, "OK");
         }
+        finally { IsBusy = false; }
     }
 }

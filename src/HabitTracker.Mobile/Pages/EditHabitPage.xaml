@@ -78,6 +78,7 @@
             <Button Text="Save Changes"
                     HeightRequest="54" CornerRadius="14"
                     FontSize="16" FontAttributes="Bold"
+                    IsEnabled="{Binding IsNotBusy}"
                     Command="{Binding SaveCommand}" />
 
             <ActivityIndicator IsRunning="{Binding IsBusy}"

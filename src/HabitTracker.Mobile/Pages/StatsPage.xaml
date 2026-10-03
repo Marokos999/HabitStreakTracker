@@ -31,7 +31,7 @@
                         StrokeShape="RoundRectangle 10"
                         StrokeThickness="0"
                         BackgroundColor="{AppThemeBinding Light={StaticResource DangerSurfaceLight}, Dark={StaticResource DangerSurfaceDark}}">
-                    <Label Text="Could not connect to server. Pull to refresh when SAM is running."
+                    <Label Text="Could not load your stats. Pull down to refresh."
                            TextColor="{AppThemeBinding Light={StaticResource DangerLight}, Dark={StaticResource DangerDark}}" FontSize="13" />
                 </Border>
 

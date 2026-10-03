@@ -41,8 +41,13 @@
             <ScrollView>
                 <VerticalStackLayout Spacing="0" Padding="0,8,0,24">
 
-                    <!-- Empty state (no active AND no completed) -->
-                    <VerticalStackLayout IsVisible="{Binding IsEmpty}"
+                    <!-- First load -->
+                    <ActivityIndicator IsRunning="{Binding ShowInitialLoading}"
+                                       IsVisible="{Binding ShowInitialLoading}"
+                                       Margin="0,60,0,0" />
+
+                    <!-- Empty state (loaded successfully, no habits) -->
+                    <VerticalStackLayout IsVisible="{Binding ShowEmptyState}"
                                          HorizontalOptions="Center"
                                          Spacing="12" Margin="0,60,0,0">
                         <Label Text="🎯" FontSize="56" HorizontalOptions="Center" />
@@ -50,9 +55,34 @@
                                FontSize="18" FontAttributes="Bold"
                                HorizontalOptions="Center"
                                TextColor="{StaticResource Gray400}" />
-                        <Label Text="Tap + to add your first habit"
+                        <Label Text="Start building a streak today"
                                FontSize="13" HorizontalOptions="Center"
-                               TextColor="{StaticResource Gray300}" />
+                               TextColor="{StaticResource Gray400}" />
+                        <Button Text="Add your first habit"
+                                CornerRadius="22" HeightRequest="44" Padding="24,0"
+                                Margin="0,8,0,0"
+                                HorizontalOptions="Center"
+                                Command="{Binding NavigateToAddCommand}" />
+                    </VerticalStackLayout>
+
+                    <!-- Error state (first load failed) -->
+                    <VerticalStackLayout IsVisible="{Binding ShowLoadError}"
+                                         HorizontalOptions="Center"
+                                         Spacing="12" Margin="32,60,32,0">
+                        <Label Text="📡" FontSize="56" HorizontalOptions="Center" />
+                        <Label Text="Could not load your habits"
+                               FontSize="18" FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               TextColor="{StaticResource Gray400}" />
+                        <Label Text="{Binding LoadError}"
+                               FontSize="13" HorizontalOptions="Center"
+                               HorizontalTextAlignment="Center"
+                               TextColor="{StaticResource Gray400}" />
+                        <Button Text="Try again"
+                                CornerRadius="22" HeightRequest="44" Padding="24,0"
+                                Margin="0,8,0,0"
+                                HorizontalOptions="Center"
+                                Command="{Binding LoadCommand}" />
                     </VerticalStackLayout>
 
                     <!-- Active habits -->
