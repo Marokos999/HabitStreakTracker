@@ -5,21 +5,21 @@ namespace HabitTracker.Application.CheckIns.CreateCheckIn;
 
 public class CreateCheckInHandler(ICheckInRepository repo, IHabitRepository habitRepo)
 {
-  public async Task<CreateCheckInResult> Handle(CreateCheckInCommand command)
-  {
-    var habit = await habitRepo.GetByIdAsync(command.UserId, command.HabitId);
-    if (habit is null || habit.IsArchived)
-      throw new KeyNotFoundException($"Habit {command.HabitId} not found.");
-
-    var checkIn = new CheckIn()
+    public async Task<CreateCheckInResult> Handle(CreateCheckInCommand command)
     {
-      HabitId = command.HabitId,
-      UserId = command.UserId,
-      Date = command.Date,
-      Note = command.Note
-    };
+        var habit = await habitRepo.GetByIdAsync(command.UserId, command.HabitId);
+        if (habit is null || habit.IsArchived)
+            throw new KeyNotFoundException($"Habit {command.HabitId} not found.");
 
-    await repo.CreateAsync(checkIn);
-    return new CreateCheckInResult(checkIn);
-  }
+        var checkIn = new CheckIn()
+        {
+            HabitId = command.HabitId,
+            UserId = command.UserId,
+            Date = command.Date,
+            Note = command.Note
+        };
+
+        await repo.CreateAsync(checkIn);
+        return new CreateCheckInResult(checkIn);
+    }
 }

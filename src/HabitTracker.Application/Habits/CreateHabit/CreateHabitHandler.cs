@@ -5,22 +5,22 @@ namespace HabitTracker.Application.Habits.CreateHabit;
 
 public class CreateHabitHandler(IHabitRepository repo)
 {
-  public async Task<CreateHabitResult> Handle(CreateHabitCommand command)
-  {
-    HabitValidator.Validate(command.Name, command.Description, command.Frequency, command.Color,
-                            command.TargetDaysPerWeek);
-
-    var habit = new Habit
+    public async Task<CreateHabitResult> Handle(CreateHabitCommand command)
     {
-      UserId = command.UserId,
-      Name = command.Name.Trim(),
-      Description = command.Description,
-      Frequency = command.Frequency,
-      Color = command.Color,
-      TargetDaysPerWeek = command.TargetDaysPerWeek
-    };
+        HabitValidator.Validate(command.Name, command.Description, command.Frequency, command.Color,
+                                command.TargetDaysPerWeek);
 
-    await repo.CreateAsync(habit);
-    return new CreateHabitResult(habit);
-  }
+        var habit = new Habit
+        {
+            UserId = command.UserId,
+            Name = command.Name.Trim(),
+            Description = command.Description,
+            Frequency = command.Frequency,
+            Color = command.Color,
+            TargetDaysPerWeek = command.TargetDaysPerWeek
+        };
+
+        await repo.CreateAsync(habit);
+        return new CreateHabitResult(habit);
+    }
 }
