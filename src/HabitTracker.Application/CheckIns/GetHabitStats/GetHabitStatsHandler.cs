@@ -7,7 +7,7 @@ public class GetHabitStatsHandler(ICheckInRepository repo)
 {
     public async Task<GetHabitStatsResult> Handle(GetHabitStatsQuery query)
     {
-        var checkIns = await repo.GetByHabitAsync(query.UsrId, query.HabitId);
+        var checkIns = await repo.GetByHabitAsync(query.UserId, query.HabitId);
         var dates = checkIns.Select(c => c.Date);
         var streak = StreakCalculator.Calculate(dates, DateOnly.FromDateTime(DateTime.UtcNow));
         return new GetHabitStatsResult(streak);
