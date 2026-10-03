@@ -20,6 +20,15 @@ Android, light and dark theme:
   <img src="docs/screenshots/android-habit-detail-dark.png" alt="Habit details in dark theme" width="200">
 </p>
 
+Windows:
+
+<p align="center">
+  <img src="docs/screenshots/windows-habits-list.png" alt="Habit list on Windows" width="200">
+  <img src="docs/screenshots/windows-habit-detail.png" alt="Habit details on Windows" width="200">
+  <img src="docs/screenshots/windows-stats.png" alt="Statistics overview on Windows" width="200">
+  <img src="docs/screenshots/windows-add-habit.png" alt="New habit form on Windows" width="200">
+</p>
+
 ## Features
 
 - Create, edit and archive habits (daily or weekly, color, target days per week)
