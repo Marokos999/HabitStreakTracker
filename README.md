@@ -4,7 +4,21 @@
 
 A habit tracking app with streak statistics: a **.NET MAUI** mobile client talking to a **serverless .NET 10 API** on AWS (Lambda, API Gateway, DynamoDB, Cognito).
 
-<!-- TODO: add screenshots / GIF of the mobile app here -->
+## Screenshots
+
+Android, light and dark theme:
+
+<p align="center">
+  <img src="docs/screenshots/android-habits-list.png" alt="Habit list" width="200">
+  <img src="docs/screenshots/android-habit-detail.png" alt="Habit details with streak, completion ring and heatmap" width="200">
+  <img src="docs/screenshots/android-stats.png" alt="Statistics overview" width="200">
+  <img src="docs/screenshots/android-add-habit.png" alt="New habit form" width="200">
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/android-habits-list-dark.png" alt="Habit list in dark theme" width="200">
+  <img src="docs/screenshots/android-habit-detail-dark.png" alt="Habit details in dark theme" width="200">
+</p>
 
 ## Features
 

@@ -147,6 +147,9 @@
                                         <Grid ColumnDefinitions="8,*,54" MinimumHeightRequest="64">
                                             <BoxView Grid.Column="0" Color="{StaticResource Success}" CornerRadius="14,0,14,0" />
                                             <VerticalStackLayout Grid.Column="1" Padding="14,12" Spacing="3" VerticalOptions="Center">
+                                                <VerticalStackLayout.GestureRecognizers>
+                                                    <TapGestureRecognizer Tapped="OnHabitTapped" />
+                                                </VerticalStackLayout.GestureRecognizers>
                                                 <Label Text="{Binding Name}" FontSize="15" FontAttributes="Bold" />
                                                 <Label Text="{Binding Description}" FontSize="12" TextColor="{StaticResource Gray400}" />
                                             </VerticalStackLayout>
